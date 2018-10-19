@@ -1,0 +1,20 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+
+def build(bld):
+    module = bld.create_ns3_module('virtual-net-device', ['network'])
+    module.source = [
+        'model/virtual-net-device.cc',
+#'model/original_virtual-net-device.cc' #jhlim
+        ]
+    headers = bld(features='ns3header')
+    headers.module = 'virtual-net-device'
+    headers.source = [
+        'model/virtual-net-device.h',
+#	'model/original_virtual-net-device.h' #jhlim
+        ]
+
+    if bld.env['ENABLE_EXAMPLES']:
+        bld.recurse('examples')
+
+    bld.ns3_python_bindings()

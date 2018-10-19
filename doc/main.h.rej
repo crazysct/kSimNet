@@ -1,0 +1,10 @@
+--- doc/main.h
++++ doc/main.h
+@@ -47,6 +47,7 @@
+  *     - nix-vector-routing
+  *     - ns3tcp
+  *     - ns3wifi
++ *     - ofswitch13
+  *     - olsr
+  *     - openflow
+  *     - point-to-point

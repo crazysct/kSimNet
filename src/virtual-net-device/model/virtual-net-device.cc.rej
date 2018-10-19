@@ -1,0 +1,44 @@
+--- src/virtual-net-device/model/virtual-net-device.cc
++++ src/virtual-net-device/model/virtual-net-device.cc
+@@ -141,6 +141,29 @@
+                            const Address &source, const Address &destination,
+                            PacketType packetType)
+ {
++  //
++  // Check if this device is configure as an OpenFlow switch port.
++  //
++  if (!m_openFlowRxCallback.IsNull ())
++    {
++      // For all kinds of packetType we receive, we hit the promiscuous sniffer
++      // hook. If the packet is addressed to this device (which is not supposed
++      // to happen in normal situations), we also hit the non-promiscuous
++      // sniffer hook, but in both cases we don't forward the packt up the
++      // stack.
++      m_promiscSnifferTrace (packet);
++      if (packetType != PACKET_OTHERHOST)
++        {
++          m_snifferTrace (packet);
++        }
++
++      // We then forward the original packet to the OpenFlow receive callback
++      // for all kinds of packetType we receive (broadcast, multicast, host or
++      // other host).
++      m_openFlowRxCallback (this, packet, protocol, source, destination, packetType);
++      return true;
++    }
++
+   // 
+   // For all kinds of packetType we receive, we hit the promiscuous sniffer
+   // hook and pass a copy up to the promiscuous callback.  Pass a copy to 
+@@ -314,5 +337,11 @@
+   return false;
+ }
+ 
++void
++VirtualNetDevice::SetOpenFlowReceiveCallback (NetDevice::PromiscReceiveCallback cb)
++{
++  NS_LOG_FUNCTION (&cb);
++  m_openFlowRxCallback = cb;
++}
+ 
+ } // namespace ns3

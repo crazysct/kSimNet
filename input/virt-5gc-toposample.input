@@ -1,0 +1,19 @@
+# Topology input description
+# 
+# - Format:
+# 1st line: N of nodes, M of links
+# following N lines: node information
+#  NodeID X_coord Y_coord Component_Info Vm_ID
+# 
+# follwing M lines: link connectivity
+#  UE_ID eNB_ID
+# -------------------------------------------------------
+5 2
+1	10	22	0	2
+2	23	12	1	1
+3	10	50 	2	
+4	5	63	3
+5	17	57	3
+3	4	4
+3	5	9
+

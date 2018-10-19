@@ -1,0 +1,10 @@
+--- doc/doxygen.conf
++++ doc/doxygen.conf
+@@ -884,6 +884,7 @@
+                          src/network/examples \
+                          src/nix-vector-routing/examples \
+                          src/olsr/examples \
++                         src/ofswitch13/examples \
+                          src/openflow/examples \
+                          src/point-to-point/examples \
+                          src/propagation/examples \

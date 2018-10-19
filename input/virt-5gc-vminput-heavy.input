@@ -1,0 +1,28 @@
+# *VM input file description
+#
+# - Each VM's information consists of 7 lines
+# - Format:
+#  1st line: VM ID
+#  2nd line: ToR ID
+#  3rd line: PM ID 
+#  4~7 line: cpuSize 	 cpuUtilization
+#  		     memorySize	 memroyUtilization
+#  		     diskSize 	 diskUtilization
+#  		     bwSize 	 bwUtiliztion
+#           (following 4 lines are cpu, memory, disk, bandwidth inforamtion)
+#
+# ---------------------------------------------------------------
+1
+3
+2
+200 195
+512 505
+3000 1900 
+10000 9500
+2
+2
+5
+210 205
+916 910
+4000 3200
+10000 9500

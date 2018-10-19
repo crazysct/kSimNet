@@ -1,0 +1,10 @@
+--- doc/models/source/index.rst
++++ doc/models/source/index.rst
+@@ -41,6 +41,7 @@
+    mobility
+    network
+    nix-vector-routing
++   ofswitch13
+    olsr
+    openflow-switch
+    point-to-point
