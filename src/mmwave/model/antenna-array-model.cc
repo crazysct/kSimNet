@@ -29,7 +29,10 @@
 #include <ns3/math.h>
 #include <ns3/simulator.h>
 #include "ns3/double.h"
-
+#include <ns3/node.h>//180714-jskim14
+#include <ns3/mobility-model.h> //180714-jskim14
+#include <ns3/mmwave-ue-net-device.h> //180718-jskim14
+#include <ns3/mc-ue-net-device.h> //180718-jskim14
 
 NS_LOG_COMPONENT_DEFINE ("AntennaArrayModel");
 
@@ -82,7 +85,7 @@ static const double All90DegreeBFVectorImag[2][4] = {
 
 
 AntennaArrayModel::AntennaArrayModel()
-	:m_minAngle (0),m_maxAngle(2*M_PI)
+	:m_minAngle (0),m_maxAngle(2*M_PI), m_alpha(0), m_beta(0*M_PI/180), m_gamma(0), m_pol(45*M_PI/180)
 {
 	m_omniTx = false;
 }
@@ -187,7 +190,7 @@ AntennaArrayModel::GetBeamformingVector ()
 {
 	if(m_omniTx)
 	{
-		NS_FATAL_ERROR ("omi transmission do not need beamforming vector");
+		NS_FATAL_ERROR ("omni transmission do not need beamforming vector");
 	}
 	return m_beamformingVector;
 }
@@ -362,24 +365,111 @@ AntennaArrayModel::SetToSector (uint32_t sector, uint32_t antennaNum)
 	m_beamformingVector = cmplxVector;
 }
 
+// We add the two 'Get radiation pattern function' for implementing polarization. 2018.07.11 shlim.
+Vector2D
+AntennaArrayModel::GetRadiationPattern_polar (double vAngle, double hAngle, uint16_t antInd)
+{
+	//180716-jskim14-for cross polarization
+	uint64_t antNum = m_vAntennaNum*m_hAntennaNum*m_polarNum;
+	double pol=m_pol;
+	if (antInd >= antNum/m_polarNum)
+	{
+		if (m_pol!=0) pol = -m_pol;
+		else pol += M_PI/2;
+	}
+	//jskim14-end
+
+ 	double theta = vAngle;
+    double phi = hAngle;
+    //double theta_prime = acos(cos(phi)*sin(theta)*sin(m_beta)+cos(theta)*cos(m_beta));
+	//180713-jskim14-revise above equation
+	double theta_prime = acos(cos(m_beta)*cos(m_gamma)*cos(theta)+(sin(m_beta)*cos(m_gamma)*cos(phi-m_alpha)-sin(m_gamma)*sin(phi-m_alpha))*sin(theta));
+
+    //std::complex<double> temp(cos(phi)*sin(theta)*cos(m_beta), sin(phi)*sin(theta));
+    //180713-jskim14-revise above equation
+	double real = cos(m_beta)*sin(theta)*cos(phi-m_alpha)-sin(m_beta)*cos(theta);
+	double imag = cos(m_beta)*sin(m_gamma)*cos(theta)+(sin(m_beta)*sin(m_gamma)*cos(phi-m_alpha)+cos(m_gamma)*sin(phi-m_alpha))*sin(theta);
+	std::complex<double> temp(real, imag);
+    double phi_prime = std::arg(temp);
+	//jskim14-end
+    
+    double cosPsi = (cos(m_beta)*cos(m_gamma)*sin(theta) - (sin(m_beta)*cos(m_gamma)*cos(phi-m_alpha)-sin(m_gamma)*
+			sin(phi-m_alpha))*cos(theta))/ sqrt(1-pow(cos(m_beta)*cos(m_gamma)*cos(theta)+(sin(m_beta)*cos(m_gamma)*
+			cos(phi-m_alpha)-sin(m_gamma)*sin(phi-m_alpha))*sin(theta),2));
+    double sinPsi = (sin(m_beta)*cos(m_gamma)*sin(phi-m_alpha)+sin(m_gamma)*cos(phi-m_alpha))/sqrt(1-pow(cos(m_beta)*
+			cos(m_gamma)*cos(theta)+(sin(m_beta)*cos(m_gamma)*cos(phi-m_alpha)-sin(m_gamma)*sin(phi-m_alpha))*sin(theta),2));
+    
+    double SLAv = 30;
+    double theta3dB = 65; // in degrees
+    double phi3dB = 65;
+    double AMax = 30;
+    double A_theta_double_db = (-1) * std::min(12*pow((RadiansToDegrees(theta_prime)-90 ) / theta3dB, 2),SLAv); //_double means double prime
+	
+    //if(RadiansToDegrees(phi_prime) > 180) {phi_prime = phi_prime-360;} 
+    //180713-jskim14-revise above code
+	if(RadiansToDegrees(phi_prime) > 180) {phi_prime = phi_prime-2*M_PI;} 
+	//jskim14-end
+    double A_phi_double_db = (-1) * std::min(12*pow(RadiansToDegrees(phi_prime)/ phi3dB, 2), AMax);
+    
+	//double A_double = (-1) * std::min((-1)*std::abs(A_theta_double+A_phi_double),AMax);
+    //180713-jskim14-revise above equation and add conver to linear
+	double A_double_db;
+	A_double_db = (-1) * std::min((-1)*(A_theta_double_db + A_phi_double_db), AMax) + 8; //180716-jskim14=plus antenna gain 8 dBi
+	//1807187-jskim14-for UE device
+	Ptr<MmWaveUeNetDevice> ueDev = DynamicCast<MmWaveUeNetDevice>(m_netDevice);
+	Ptr<McUeNetDevice> mcUeDev = DynamicCast<McUeNetDevice>(m_netDevice);
+	if (ueDev || mcUeDev)
+	{
+		A_double_db = 8;
+	}
+	//jskim14-end
+	double A_double = pow(10, A_double_db/10);
+    
+	//180713-jskim14-revise below equations-we don't need to calculate F_angle_double because A_double is equal to A_prime (A'=A'')
+	// double F_theta_double = sqrt(A_double)*cos(pol); 
+    // double F_phi_double = sqrt(A_double)*sin(pol);
+    // double cosPsi_prime = cos(pol)*sin(theta_prime)+sin(pol)*sin(phi_prime)*cos(theta_prime) 
+	// 						/ sqrt(1-pow(cos(pol)*cos(theta_prime)-sin(pol)*sin(phi_prime)*sin(theta_prime),2));
+    // double sinPsi_prime = sin(pol)*cos(phi_prime) / sqrt(1-pow(cos(pol)*cos(theta_prime)-sin(pol)*sin(phi_prime)*sin(theta_prime),2));
+    // double F_theta_prime = F_theta_double * cosPsi_prime - F_phi_double * sinPsi_prime;
+    // double F_phi_prime = F_theta_double *sinPsi_prime + F_phi_double * cosPsi_prime;
+    
+	double F_theta_prime = sqrt(A_double) * cos(pol);
+    double F_phi_prime = sqrt(A_double) * sin(pol);
+	//jskim14-end
+
+	NS_LOG_INFO("Total antenna elements=" << antNum << ", antenna index=" << antInd << ", polarization in degree=" << pol*180/M_PI);
+ 
+	double F_theta = F_theta_prime*cosPsi - F_phi_prime*sinPsi;
+    double F_phi = F_theta_prime*sinPsi + F_phi_prime*cosPsi; //180724-jskim14-bug fix, F_theta --> F_phi
+    
+    Vector2D radiationField(F_theta, F_phi);
+
+    return radiationField;
+}
+
 double
-AntennaArrayModel::GetRadiationPattern (double vAngle, double hAngle)
+AntennaArrayModel::GetRadiationPattern_nonpolar (double vAngle, double hAngle)
 {
 	NS_ASSERT_MSG(vAngle>=0&&vAngle<=180, "the vertical angle should be the range of [0,180]");
-	NS_ASSERT_MSG(hAngle>=-180&&vAngle<=180, "the vertical angle should be the range of [0,180]");
-	return 1; //for testing
-	/*double A_EV = -1*std::min(12*pow((vAngle-90)/65,2),30.0);
-	if(hAngle != 0)
+	NS_ASSERT_MSG(hAngle>=-180&&vAngle<=180, "the horizontal angle should be the range of [-180,180]");
+	//for testing
+	/*
+	double A_EV = -1*std::min(12*pow((vAngle-90)/65,2),30.0);
+	if(hAngle !=0)
 	{
 		double A_EH = -1*std::min(12*pow(hAngle/65,2),30.0);
 		double A = -1*std::min(-1*A_EV-1*A_EH,30.0);
-		return pow(10,A/10); //convert to linear;
+		return pow(10, A/10); //convert to linear;
 	}
 	else
 	{
-		return pow(10,A_EV/10); //convert to linear;
-	}*/
+		return pow(10, A_EV/10); // convert to linear;
+	}
+	*/
+	return 1;
 }
+
 Vector
 AntennaArrayModel::GetAntennaLocation(uint8_t index, uint8_t* antennaNum)
 {
@@ -391,6 +481,38 @@ AntennaArrayModel::GetAntennaLocation(uint8_t index, uint8_t* antennaNum)
 	return loc;
 }
 
+//180704-jskim14-new antenna location function
+Vector
+AntennaArrayModel::GetAntennaLocation(uint8_t index, uint8_t vAntennaNum, uint8_t hAntennaNum, uint8_t polarNum)
+{
+	//assume the left bottom corner is (0,0,0), and the rectangular antenna array is on the y-z plane.
+	//assume the antenna index order (1.vertical, 2.hrizontal, 3.polar)
+	//Vector location = m_netDevice->GetNode()->GetObject<MobilityModel>()->GetPosition();
+
+	if(polarNum==1)
+	{
+		Vector loc;
+		loc.x = 0;
+		loc.y = m_disH* (index / vAntennaNum);
+		loc.z = m_disV* (index % vAntennaNum);
+		return loc;
+	}
+	else
+	{
+		if (index >= vAntennaNum*hAntennaNum)
+		{
+			index = index - vAntennaNum*hAntennaNum;
+		}
+		Vector loc;
+		loc.x = 0;
+		loc.y = m_disH * (index / vAntennaNum);
+		loc.z = m_disV * (index % vAntennaNum);
+		NS_LOG_INFO ("Antenna Index=" << (unsigned)index << " -> location: x=" << (double)loc.x << ", y=" << (double)loc.y << ", z=" << (double)loc.z);
+		return loc;
+	}
+}
+//jskim14
+
 void
 AntennaArrayModel::SetSector (uint8_t sector, uint8_t *antennaNum, double elevation)
 {
@@ -398,6 +520,7 @@ AntennaArrayModel::SetSector (uint8_t sector, uint8_t *antennaNum, double elevat
 	double hAngle_radian = M_PI*(double)sector/(double)antennaNum[1]-0.5*M_PI;
 	double vAngle_radian = elevation*M_PI/180;
 	uint16_t size = antennaNum[0]*antennaNum[1];
+	NS_LOG_INFO("Antenna size: " << (double)size << " horizontal: " << (double)antennaNum[1] << " vertical: " << (double)antennaNum[0]);
 	double power = 1/sqrt(size);
 	for(int ind=0; ind<size; ind++)
 	{
@@ -410,6 +533,171 @@ AntennaArrayModel::SetSector (uint8_t sector, uint8_t *antennaNum, double elevat
 	m_beamformingVector = tempVector;
 }
 
+//180702-jskim14-antenna parameters setting function
+void
+AntennaArrayModel::SetAntParams (uint8_t connectMode, uint8_t vAntNum, uint8_t hAntNum, uint8_t polarNum, uint8_t vTxruNum, uint8_t hTxruNum, Ptr<NetDevice> device)
+{
+	//NS_LOG_UNCOND("Antenna Array " << " jskim test " << (unsigned)connectMode << " " << (unsigned)(noAntennas/noHTxrus/noPolar));
+	m_connectMode = connectMode;
+	m_vAntennaNum = vAntNum;
+	m_hAntennaNum = hAntNum;
+	m_polarNum = polarNum;
+	m_vTxruNum = vTxruNum;
+	m_hTxruNum = hTxruNum;
+	m_netDevice = device;
+	SetAntennaWeightMatrix();
+}
+//jskim14-end
 
+//180822-jskim14-digital beamforming vector setting
+void
+AntennaArrayModel::SetDigitalBeamformingVector()
+{
+	//TBD
+}
+//
+
+//180705-jskim14-analog beamforming vector setting
+void
+AntennaArrayModel::SetAntennaWeightMatrix ()
+{
+	m_antennaWeightMat.clear();
+	double beamNum = 0;
+	uint16_t antNum = 0;
+	//Vector location = m_netDevice->GetNode()->GetObject<MobilityModel>()->GetPosition();
+	switch (m_connectMode)
+	{
+		//1-D full connection mode
+		case 0:
+		{
+			beamNum = m_vTxruNum*m_hTxruNum*m_polarNum;
+			antNum = m_vAntennaNum*m_hAntennaNum*m_polarNum;
+			NS_LOG_INFO("1-D full connection mode: " << "# of beams=" << (double)beamNum << " # of antenna elements=" << (unsigned)antNum);	
+			complex2DVector_t tempWeightMat(antNum, complexVector_t(beamNum, 0));
+			for(int beamInd=0; beamInd<beamNum; beamInd++)
+			{
+				double elevation = 180/beamNum*(beamInd+1);
+				double vAngle_radian = elevation*M_PI/180;
+				NS_LOG_INFO("1-D full connection mode: " << "elevation angle: " << (double)elevation << " degree");	
+				//complex2DVector_t tempVec(antNum, complexVector_t(beamNum, 0));
+				for(int antInd=0; antInd<antNum; antInd++)
+				{
+					int startAntInd = m_vAntennaNum*(beamInd/m_vTxruNum);
+					int endAntInd = startAntInd + (m_vAntennaNum-1);
+					if(antInd>=startAntInd && antInd<=endAntInd)
+					{
+						Vector loc = GetAntennaLocation(antInd, m_vAntennaNum, m_hAntennaNum, m_polarNum);
+						double phase = -2*M_PI*(cos(vAngle_radian)*(loc.z));
+						double power = 1/sqrt(m_vAntennaNum);
+						NS_LOG_INFO("1-D full connection mode: " << " antenna ind: " << (int)antInd << " antenna location: x=" << (double)loc.x << ", y=" << (double)loc.y << ", z=" << (double)loc.z);	
+						tempWeightMat[antInd][beamInd] = exp(std::complex<double>(0, phase))*power;
+						NS_LOG_INFO("Antenna weight=" << tempWeightMat[antInd][beamInd]);
+					}
+					else
+					{
+						tempWeightMat[antInd][beamInd] = 0;
+					}
+				}
+				m_antennaWeightMat = tempWeightMat;
+			}
+			break;
+		}
+		//2-D full connection mode
+		case 1:
+		{
+			double vBeamNum = m_vTxruNum;
+			double hBeamNum = m_hTxruNum*m_polarNum;
+			beamNum = vBeamNum*hBeamNum;
+			antNum = m_vAntennaNum*m_hAntennaNum*m_polarNum;
+			double azimuthRange = 120;
+			//1807187-jskim14-for UE device
+			Ptr<MmWaveUeNetDevice> ueDev = DynamicCast<MmWaveUeNetDevice>(m_netDevice);
+			Ptr<McUeNetDevice> mcUeDev = DynamicCast<McUeNetDevice>(m_netDevice);
+			if (ueDev || mcUeDev)
+			{
+				azimuthRange = 360;
+			}
+			//jskim14-end
+			NS_LOG_INFO("2-D full connection mode: " << "# of beams=" << (double)beamNum << " # of antenna elements=" << (unsigned)antNum);	
+			complex2DVector_t tempWeightMat(antNum, complexVector_t(beamNum, 0));
+			for(int vBeamInd=0; vBeamInd<vBeamNum; vBeamInd++)
+			{
+				double elevation = 180/vBeamNum*(vBeamInd+1);
+				double vAngle_radian = elevation*M_PI/180;
+				for(int hBeamInd=0; hBeamInd<hBeamNum; hBeamInd++)
+				{
+					double azimuth = azimuthRange/hBeamNum*(hBeamInd+1)-(azimuthRange/2);
+					double hAngle_radian = azimuth*M_PI/180;
+					NS_LOG_INFO("2-D full connection mode: " << "elevation angle=" << (double)elevation << " degree, azimuth angle=" << (double)azimuth);	
+					for(int antInd=0; antInd<antNum; antInd++)
+					{
+						int pInd;
+						if (antInd >= m_vAntennaNum*m_hAntennaNum) pInd=1;		
+						else pInd= 2;
+						Vector loc = GetAntennaLocation(antInd, m_vAntennaNum, m_hAntennaNum, m_polarNum);
+						double vPhase = -2*M_PI*(cos(vAngle_radian)*(loc.z));
+						double vPower = 1/sqrt(m_vAntennaNum);
+						double hPhase = -2*M_PI*(sin(hAngle_radian)*(loc.y));
+						double hPower = 1/sqrt(m_hAntennaNum*m_polarNum);
+						double real = sin(m_gamma)*cos(vAngle_radian)*sin(hAngle_radian-m_alpha)+cos(m_gamma)*(cos(m_beta)*sin(vAngle_radian)-sin(m_beta)*cos(vAngle_radian)*cos(hAngle_radian-m_alpha));
+						double imag = sin(m_gamma)*cos(hAngle_radian-m_alpha)+sin(m_beta)*cos(m_gamma)*sin(hAngle_radian-m_alpha);
+						std::complex<double> temp = std::complex<double>(real, imag);
+						double psi = std::arg(temp);
+						double pPhase = -(pInd-1)*psi;					
+						NS_LOG_INFO("2-D full connection mode: " << " antenna ind: " << (int)antInd << " antenna location: x=" << (double)loc.x << ", y=" << (double)loc.y << ", z=" << (double)loc.z);	
+						tempWeightMat[antInd][hBeamInd*m_vTxruNum+vBeamInd] = exp(std::complex<double>(0, vPhase))*vPower*exp(std::complex<double>(0, hPhase))*hPower*exp(std::complex<double>(0,pPhase));
+						NS_LOG_INFO("Antenna weight=" << tempWeightMat[antInd][hBeamInd*m_vTxruNum+vBeamInd]);
+					}
+				}
+				m_antennaWeightMat = tempWeightMat;
+			}
+			break;
+		}
+		case 2:
+		case 3:
+		default:
+			NS_FATAL_ERROR ("Do not support this Antenna connection mode !");
+	}
+}
+//jskim14-end
+
+//180709-jskim14-add get antenna weight matrix
+complex2DVector_t
+AntennaArrayModel::GetAntennaWeightMatrix()
+{
+	return m_antennaWeightMat;
+}
+//jskim14-end
+
+//180715-jskim14-add set antenna rotation
+void
+AntennaArrayModel::SetAntennaRotation (double alpha, double beta, double gamma, double pol) //input is degree
+{
+	m_alpha = alpha*M_PI/180;
+	m_beta = beta*M_PI/180;
+	m_gamma = gamma*M_PI/180;
+	m_pol = pol*M_PI/180;
+}
+//jskim14-end
+
+//180717-jskim14-add get net device
+Ptr<NetDevice>
+AntennaArrayModel::GetNetDevice ()
+{
+	return m_netDevice;
+}
+//jskim14-end
+
+//180718-jskim14-add get number of TXRUs
+Vector
+AntennaArrayModel::GetTxruNum ()
+{
+	Vector txrus;
+	txrus.x = m_vTxruNum;
+	txrus.y = m_hTxruNum;
+	txrus.z = m_polarNum;
+	return txrus;
+}
+//jskim14-end
 
 } /* namespace ns3 */

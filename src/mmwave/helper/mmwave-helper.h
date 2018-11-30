@@ -261,7 +261,15 @@ private:
 
 	uint64_t m_imsiCounter;
 	uint16_t m_cellIdCounter;
-
+	uint8_t m_nrTxMode; //180615-jskim14- NR tx mode parameter
+	//uint8_t m_connectMode; // 180702-jskim14- Antenna connection mode
+	//uint8_t m_noBsVTxrus; //180629-jskim14- The number of vertical TXRUsj in BS
+	//uint8_t m_noBsHTxrus; //180629-jskim14- The number of horizontal TXRUs in BS
+	//uint8_t m_noBsPolar; // 180702-jskim14- The number of polarization dim in BS
+	//uint8_t m_noUeVTxrus; //180702-jskim14- The number of vertical TXRUs in UE
+	//uint8_t m_noUeHTxrus; //180702-jskim14- The number of horizontal TXRUs in UE
+	//uint8_t m_noUePolar; // 180702-jskim14- The number of polarization dim in UE
+	
 	uint16_t m_noTxAntenna;
 	uint16_t m_noRxAntenna;
 

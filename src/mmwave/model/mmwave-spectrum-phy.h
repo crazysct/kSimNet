@@ -154,6 +154,8 @@ public:
 	void SetHarqPhyModule (Ptr<MmWaveHarqPhy> harq);
 	bool isAdditionalMmWave =false; //sjkang
 
+    void SetNrTxMode (uint8_t nrTxMode); //180615-jskim14-NR tx mode setting
+	void SetDownlink (bool downlink); //180807-jskim14-set downlink spectrum PHY
 
 private:
 	void ChangeState (State newState);
@@ -177,8 +179,10 @@ private:
 	Ptr<AntennaModel> m_antenna;
 
 	uint16_t m_cellId;
-
+	
 	State m_state;
+	
+	uint8_t m_nrTxMode; //180615-jskim14-NR tx mode parameter
 
 	MmWavePhyRxCtrlEndOkCallback    m_phyRxCtrlEndOkCallback;
 	MmWavePhyRxDataEndOkCallback 		m_phyRxDataEndOkCallback;
@@ -206,6 +210,8 @@ private:
 	EventId m_endRxDataEvent;
   	EventId m_endRxDlCtrlEvent;
   	std::string m_fileName;
+
+	bool m_isDl; // 180807-jskim14-check for Downlink
 
 };
 

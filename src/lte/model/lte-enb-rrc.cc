@@ -3531,6 +3531,13 @@ LteEnbRrc::SetInterRatHoMode(void)
   m_interRatHoMode = true;
 }
 
+//180615-jskim14-add function for transmission mode setting
+void
+LteEnbRrc::SetDefaultTxMode (uint8_t txMode)
+{
+  m_defaultTransmissionMode = txMode;
+}
+//jskim14-end
 
 void
 LteEnbRrc::SetCellId (uint16_t cellId)

@@ -50,6 +50,27 @@ class Node;
 class LteEnbNetDevice;
 class MmWaveEnbNetDevice;
 
+/*
+//180704-jskim14-add antenna parameters
+struct AntennaParams 
+{
+    AntennaParams (): m_vAntennaNum (4), m_hAntennaNum (4), m_polarNum (1), m_vTxrusNum(2), m_hTxrusNum(4), m_connectMode(0)
+	{
+	}
+
+	AntennaParams (uint8_t vAntennaNum, uint8_t hAntennaNum, uint8_t polarNum, uint8_t vTxrusNum, uint8_t hTxrusNum, uint8_t connectMode)
+		: m_vAntennaNum (vAntennaNum), m_hAntennaNum (hAntennaNum), m_polarNum (polarNum), m_vTxrusNum (vTxrusNum), m_hTxrusNum (hTxrusNum), m_connectMode (connectMode)
+	{
+	}
+  	uint8_t m_vAntennaNum; //The number of vertical antenna elements
+   	uint8_t m_hAntennaNum; //The number of horizontal antenna elements
+	uint8_t m_polarNum;    //The number of polarization dimension
+   	uint8_t m_vTxrusNum;   //The number of vertical TXRUs
+   	uint8_t m_hTxrusNum;   //The number of horizontal TXRUs
+    uint8_t m_connectMode; //Antenna connection mode (0:1-D full, 1:2-D full, 2,3)
+};
+//jskim14-end
+*/
 
 /**
   * \ingroup mmWave
@@ -197,6 +218,19 @@ public:
 
     uint8_t GetAntennaNum () const;
 
+	//180704-jskim14-add new functions
+	void SetAntennaParams (uint8_t vAntennaNum, uint8_t hAntennaNum, uint8_t polarNum, uint8_t vTxruNum, uint8_t hTxruNum, uint8_t connectMode);
+	void SetAntennaRotation (double alpha, double beta, double gamma, double pol); //180716-jskim14-input is degree
+	uint8_t GetVAntennaNum ();
+	uint8_t GetHAntennaNum ();
+	uint8_t GetPolarNum ();
+	uint8_t GetVTxruNum ();
+	uint8_t GetHTxruNum ();
+	uint8_t GetConnectMode ();
+	Vector GetRotation (); //180716-jskim14
+	double GetPolarization (); //180716-jskim14
+    //jskim14-end
+
 protected:
     NetDevice::ReceiveCallback m_rxCallback;
     virtual void DoInitialize (void);
@@ -257,6 +291,11 @@ private:
 	// TODO this will be useless
 	Ptr<UniformRandomVariable> m_random;
 
+	AntennaParams m_antennaParams; //180714-jskim14-Parameters of antenna
+	//180716-jskim14-antenna rotation parameterd
+	Vector m_rotation;
+	double m_pol;
+	//jskim14-end
 };
 
 } // namespace ns3

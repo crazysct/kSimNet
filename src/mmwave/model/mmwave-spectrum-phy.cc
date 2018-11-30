@@ -91,7 +91,9 @@ static const double EffectiveCodingRate[29] = {
 
 MmWaveSpectrumPhy::MmWaveSpectrumPhy()
 	:m_cellId(0),
-	 m_state(IDLE)
+	 m_state(IDLE),
+	 m_nrTxMode(0),//180615-jskim14-NR tx mode parameter
+	 m_isDl(false) //180807-jskim14-check for downlink
 {
 	m_interferenceData = CreateObject<mmWaveInterference> ();
 	m_random = CreateObject<UniformRandomVariable> ();
@@ -145,6 +147,7 @@ MmWaveSpectrumPhy::Reset ()
   NS_LOG_FUNCTION (this);
   m_cellId = 0;
   m_state = IDLE;
+  m_nrTxMode = 0; //180615-jskim14-add NR tx mode parameter
   m_endTxEvent.Cancel ();
   m_endRxDataEvent.Cancel ();
   m_endRxDlCtrlEvent.Cancel ();
@@ -313,6 +316,14 @@ MmWaveSpectrumPhy::SetPhyUlHarqFeedbackCallback (MmWavePhyUlHarqFeedbackCallback
   NS_LOG_FUNCTION (this);
   m_phyUlHarqFeedbackCallback = c;
 }
+
+//180807-jskim14-set downlink spectrum PHY
+void
+MmWaveSpectrumPhy::SetDownlink (bool downlink)
+{
+	m_isDl = downlink;
+}
+//jskim14-end
 
 void
 MmWaveSpectrumPhy::StartRx (Ptr<SpectrumSignalParameters> params)
@@ -526,7 +537,20 @@ MmWaveSpectrumPhy::StartRxCtrl (Ptr<SpectrumSignalParameters> params)
 					NS_ASSERT (m_rxControlMessageList.empty ());
 					m_firstRxStart = Simulator::Now ();
 					m_firstRxDuration = params->duration;
-					NS_LOG_LOGIC (this << " scheduling EndRx with delay " << params->duration);
+					Ptr<SpectrumValue> newPsd = params->psd;
+					SpectrumValue snr = *newPsd;
+					double avgSnr = Sum(snr)/(snr.GetSpectrumModel()->GetNumBands());
+					//180807-jskim14
+					if (m_isDl==true)
+					{
+						NS_LOG_INFO("DL control msg: time=" << Simulator::Now() << " snr[dB]=" << 10*log10(avgSnr));
+					}
+					else
+					{
+						//TBD
+					}
+					//jskim14-end
+					NS_LOG_INFO (this << ", time: " << m_firstRxStart <<  ", scheduling EndRx with delay " << params->duration);
 					// store the DCIs
 					m_rxControlMessageList = dlCtrlRxParams->ctrlMsgList;
 					m_endRxDlCtrlEvent = Simulator::Schedule (params->duration, &MmWaveSpectrumPhy::EndRxCtrl, this);
@@ -554,7 +578,7 @@ MmWaveSpectrumPhy::EndRxData ()
 	m_interferenceData->EndRx();
 
 	double sinrAvg = Sum(m_sinrPerceived)/(m_sinrPerceived.GetSpectrumModel()->GetNumBands());
-//	std::cout << sinrAvg <<"\t" <<sinr.GetSpectrumModel()->GetNumBands()<< std::endl;
+	//std::cout << sinrAvg <<"\t" <<sinr.GetSpectrumModel()->GetNumBands()<< std::endl;
 	//std::cout<< sinrAvg <<std::endl;
 	double sinrMin = 99999999999;
 	for (Values::const_iterator it = m_sinrPerceived.ConstValuesBegin (); it != m_sinrPerceived.ConstValuesEnd (); it++)
@@ -599,10 +623,10 @@ MmWaveSpectrumPhy::EndRxData ()
 			itTb->second.tbler = tbStats.tbler;
 			itTb->second.mi = tbStats.miTotal;
 			itTb->second.corrupt = m_random->GetValue () > tbStats.tbler ? false : true;
-			if (itTb->second.corrupt)
-			{
-				NS_LOG_INFO (this << " RNTI " << itTb->first << " size " << itTb->second.size << " mcs " << (uint32_t)itTb->second.mcs << " bitmap " << itTb->second.rbBitmap.size () << " rv " << rv << " TBLER " << tbStats.tbler << " corrupted " << itTb->second.corrupt);
-			}
+			//if (itTb->second.corrupt)
+			//{
+				NS_LOG_UNCOND (Simulator::Now() << " " << this << " NR spectrum PHY RNTI " << itTb->first << " size " << itTb->second.size << " mcs " << (uint32_t)itTb->second.mcs << " bitmap " << itTb->second.rbBitmap.size () << " rv " << (uint32_t)rv << " TBLER " << tbStats.tbler << " corrupted " << itTb->second.corrupt << " snr[dB]=" << 10*log10(sinrAvg));
+			//}
 		}
 		itTb++;
 	}
@@ -868,7 +892,8 @@ MmWaveSpectrumPhy::StartTxDataFrames (Ptr<PacketBurst> pb, std::list<Ptr<MmWaveC
 		txParams->ctrlMsgList = ctrlMsgList;
 		txParams->slotInd = slotInd;
 		txParams->txAntenna = m_antenna;
-
+		txParams->nrTxMode = m_nrTxMode; //180615-jskim14-add NR tx mode parameter
+		
 		//NS_LOG_DEBUG ("ctrlMsgList.size () == " << txParams->ctrlMsgList.size ());
 
 		/* This section is used for trace */
@@ -992,5 +1017,12 @@ MmWaveSpectrumPhy::SetHarqPhyModule (Ptr<MmWaveHarqPhy> harq)
   m_harqPhyModule = harq;
 }
 
+//180615-jskim14-NR tx mode setting
+void
+MmWaveSpectrumPhy::SetNrTxMode (uint8_t nrTxMode)
+{
+  m_nrTxMode = nrTxMode;
+}
+//jskim14-end
 
 }
