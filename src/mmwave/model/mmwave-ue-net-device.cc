@@ -246,4 +246,76 @@ MmWaveUeNetDevice::SetAntennaNum (uint8_t antennaNum)
 	m_antennaNum = antennaNum;
 }
 
+//180704-jskim14-add new function for antenna parameters
+void
+MmWaveUeNetDevice::SetAntennaParams (uint8_t vAntennaNum, uint8_t hAntennaNum, uint8_t polarNum, uint8_t vTxruNum, uint8_t hTxruNum, uint8_t connectMode)
+{
+	m_antennaParams.m_vAntennaNum=vAntennaNum;
+	m_antennaParams.m_hAntennaNum=hAntennaNum;
+	m_antennaParams.m_polarNum=polarNum;
+	m_antennaParams.m_vTxruNum=vTxruNum;
+	m_antennaParams.m_hTxruNum=hTxruNum;
+	m_antennaParams.m_connectMode=connectMode;
+}
+
+//180716-jskim14-add new function for antenna rotation
+void
+MmWaveUeNetDevice::SetAntennaRotation (double alpha, double beta, double gamma, double pol) //input is degree
+{
+	m_rotation.x = alpha;
+	m_rotation.y = beta;
+	m_rotation.z = gamma;
+	m_pol = pol;
+}
+
+Vector
+MmWaveUeNetDevice::GetRotation ()
+{
+  return m_rotation;
+}
+
+double
+MmWaveUeNetDevice::GetPolarization ()
+{
+  return m_pol;
+}
+//jskim14-end
+
+uint8_t
+MmWaveUeNetDevice::GetVAntennaNum ()
+{
+	return m_antennaParams.m_vAntennaNum;
+}
+
+uint8_t
+MmWaveUeNetDevice::GetHAntennaNum ()
+{
+	return m_antennaParams.m_hAntennaNum;
+}
+
+uint8_t
+MmWaveUeNetDevice::GetPolarNum ()
+{
+	return m_antennaParams.m_polarNum;
+}
+
+uint8_t
+MmWaveUeNetDevice::GetVTxruNum ()
+{
+	return m_antennaParams.m_vTxruNum;
+}
+
+uint8_t
+MmWaveUeNetDevice::GetHTxruNum ()
+{
+	return m_antennaParams.m_hTxruNum;
+}
+
+uint8_t
+MmWaveUeNetDevice::GetConnectMode ()
+{
+	return m_antennaParams.m_connectMode;
+}
+//jskim14-end
+
 }

@@ -1087,6 +1087,10 @@ void
 MmWaveUePhy::DoSetTransmissionMode (uint8_t txMode)
 {
 	NS_LOG_FUNCTION (this << (uint16_t)txMode);
+	//NS_LOG_UNCOND (this << " MmWave UE PHY tx mode: " << 0);
+  	this->m_downlinkSpectrumPhy->SetNrTxMode(0); //180617-jskim14-NR tx mode setting to SpectrumPhy module
+  	// UL supports only SISO MODE
+	this->m_uplinkSpectrumPhy->SetNrTxMode(0); //180617-jskim14
 }
 
 void

@@ -34,6 +34,7 @@
 #include <ns3/propagation-delay-model.h>
 #include <ns3/antenna-model.h>
 #include <ns3/angles.h>
+#include <ns3/mmwave-spectrum-signal-parameters.h> //180615-jskim14-for NR tx mode setting
 #include <iostream>
 #include <utility>
 #include "multi-model-spectrum-channel.h"
@@ -262,6 +263,20 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
   NS_ASSERT (txParams->txPhy);
   NS_ASSERT (txParams->psd);
 
+  //180615-jskim14-Check NR tx mode for data transmission
+  Ptr<MmwaveSpectrumSignalParametersDataFrame> txParamsMmData = DynamicCast<MmwaveSpectrumSignalParametersDataFrame> (txParams);
+  bool hybridBeam = false;
+  if(txParamsMmData != 0)
+  {
+    uint8_t nrTxMode = txParamsMmData->nrTxMode; 
+    if(nrTxMode==1)
+    {
+      hybridBeam = true;
+    }
+    //NS_LOG_UNCOND(this << " MultiModelSpectrumChannel: NR tx mode is " << (unsigned)nrTxMode);
+    //NS_LOG_UNCOND(this << " MultiModelSpectrumChannel: Hyrid beamforming " << hybridBeam);
+  }
+  //jskim14-end
 
   Ptr<MobilityModel> txMobility = txParams->txPhy->GetMobility ();
   SpectrumModelUid_t txSpectrumModelUid = txParams->psd->GetSpectrumModelUid ();
@@ -353,7 +368,17 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 
                   if (m_spectrumPropagationLoss)
                     {
-                      rxParams->psd = m_spectrumPropagationLoss->CalcRxPowerSpectralDensity (rxParams->psd, txMobility, receiverMobility);
+                      //180617-jskim14-add NR tx mode
+                      if(hybridBeam)
+                      {
+                        //NS_LOG_UNCOND("Tx mode is hybrid beamforming");
+                        rxParams->psd = m_spectrumPropagationLoss->CalcRxPowerSpectralDensity (rxParams->psd, txMobility, receiverMobility);
+                      }
+                      else
+                      {
+                        rxParams->psd = m_spectrumPropagationLoss->CalcRxPowerSpectralDensity (rxParams->psd, txMobility, receiverMobility);
+                      }
+                      //jskim14-end
                     }
 
                   if (m_propagationDelay)

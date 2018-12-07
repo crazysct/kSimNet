@@ -59,6 +59,7 @@ namespace ns3{
 
 typedef std::vector<double> doubleVector_t;
 typedef std::vector<doubleVector_t> double2DVector_t;
+typedef std::vector<double2DVector_t> double3DVector_t;
 
 typedef std::vector< std::complex<double> > complexVector_t;
 typedef std::vector<complexVector_t> complex2DVector_t;
@@ -80,6 +81,9 @@ struct Params3gpp : public SimpleRefCount<Params3gpp>
 
 	double2DVector_t		m_nonSelfBlocking; // store the blockages
 
+	complex2DVector_t		m_txWMat; //180709-jskim14-tx weight matrix
+	complex2DVector_t		m_rxWMat; //180709-jskim14-rx weight matrix
+
 	/*The following parameters are stored for spatial consistent updating*/
 	Vector m_preLocUT; // location of UT when generating the previous channel
 	Vector m_locUT; // location of UT
@@ -88,13 +92,16 @@ struct Params3gpp : public SimpleRefCount<Params3gpp>
 	double m_DS; // delay spread
 	double m_K; //K factor
 	uint8_t m_numCluster; // reduced cluster number;
-	double2DVector_t m_clusterPhase;
+	double3DVector_t m_clusterPhase_3D;
+	double2DVector_t m_clusterPhase_2D;
 	double m_losPhase;
 	bool m_los;
 	bool m_o2i;
 	Vector m_speed;
 	double m_dis2D;
 	double m_dis3D;
+
+	bool m_analogBeamSet; //180820-jskim14, whether analog beamforming vector is configured or not
 };
 
 /**
@@ -123,6 +130,8 @@ struct ParamsTable: public Object
 	double m_sigK = 0;
 	double m_rTau = 0;
 	double m_shadowingStd = 0;
+	double m_uXpr = 0;
+	double m_sigXpr = 0;
 
 	double m_sqrtC[7][7];
 
@@ -131,7 +140,7 @@ struct ParamsTable: public Object
 			double uLgASD, double sigLgASD, double uLgASA, double sigLgASA,
 			double uLgZSA, double sigLgZSA, double uLgZSD, double sigLgZSD, double offsetZOD,
 			double cDS, double cASD, double cASA, double cZSA,
-			double uK, double sigK, double rTau, double shadowingStd)
+			double uK, double sigK, double rTau, double shadowingStd, double uXpr, double sigXpr)
 	{
 		m_numOfCluster = numOfCluster;
 		m_raysPerCluster = raysPerCluster;
@@ -154,6 +163,9 @@ struct ParamsTable: public Object
 		m_sigK = sigK;
 		m_rTau = rTau;
 		m_shadowingStd = shadowingStd;
+		m_uXpr = uXpr;
+		m_sigXpr = sigXpr;
+		// We insert xpr value to implement the step9, polarization. 2018. 07. 03 shlim.
 	}
 
 };
@@ -219,6 +231,8 @@ public:
 	 */
 	void SetPathlossModel (Ptr<PropagationLossModel> pathloss);
 	 bool isAdditionalMmWavePhy=false;//sjkang
+
+	 void SetNrTxMode (uint8_t nrTxMode); // 180628-jskim14, set NR tx mode in 3gpp channel
 private:
 
 	/**
@@ -286,6 +300,15 @@ private:
 	void BeamSearchBeamforming (Ptr<const SpectrumValue> txPsd, Ptr<Params3gpp> params, Ptr<AntennaArrayModel> txAntenna,
 			Ptr<AntennaArrayModel> rxAntenna, uint8_t *txAntennaNum, uint8_t *rxAntennaNum) const;
 
+	//180709-jskim14-find optimal beamforming
+	void IdealBeamforming (Ptr<const SpectrumValue> txPsd, Ptr<Params3gpp> params, Ptr<AntennaArrayModel> txAntenna,
+			Ptr<AntennaArrayModel> rxAntenna, uint8_t *txAntennaNum, uint8_t *rxAntennaNum) const;
+	complex2DVector_t Multiplication (complex2DVector_t mtx1, complex2DVector_t mtx2) const;
+	complex2DVector_t Transpose (complex2DVector_t mtx);
+	std::complex<double> Determinant (complex2DVector_t mtx, int size);
+	complex2DVector_t Inverse (complex2DVector_t mtx);
+	complex2DVector_t Hermitian (complex2DVector_t mtx);
+	//jskim14-end
 
 	/**
 	 * Compute and store the long term fading params in order to decrease the computational load
@@ -329,8 +352,10 @@ private:
 	 * @params the mobility model of the transmitter
 	 * @params the mobility model of the receiver
 	 */
-	void DeleteChannel(Ptr<const MobilityModel> a,
-			Ptr<const MobilityModel> b) const;
+	void DeleteChannel(Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) const;
+
+	void ConfigAnalogBeam(Ptr<const MobilityModel> a, Ptr<const MobilityModel> b) const; //180821-jskim14
+			
 	/*
 	 * Returns the attenuation of each cluster in dB after applying blockage model
 	 * @params the channel realizationin as a Params3gpp object
@@ -362,8 +387,22 @@ private:
 	std::string m_scenario;
 	double m_blockerSpeed;
 	bool m_forceInitialBfComputation;
+	bool m_crossPolar; // true (polarization exists); false (polarization non-exists). 2018.07.03 shlim.
+	double m_frequency;
+	double m_bandwidth; // declare frequency and bandwidth, 2018.07.10 shlim.
 
-
+    uint8_t m_nrTxMode; //180628-jskim14, set NR tx mode in 3gpp channel
+	
+	// declare these parameter for mmwave-3gpp-channel.cc. 2018.07.10 shlim.
+	char m_channelCond;
+    AntennaArrayModel m_antennaUT;
+    AntennaArrayModel m_antennaBS;
+    MmWave3gppPropagationLossModel m_3gppPropagationLoss;
+    
+    Params3gpp pastParams;
+    Time m_analogBeamPeriod; // 180821-jskim14-set analog beamforming vector update period (in ms)
+    
+    double m_lossValue;
 };
 
 

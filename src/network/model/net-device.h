@@ -37,6 +37,26 @@ namespace ns3 {
 class Node;
 class Channel;
 
+//180704-jskim14-add antenna parameters
+struct AntennaParams 
+{
+    AntennaParams (): m_vAntennaNum (8), m_hAntennaNum (8), m_polarNum (1), m_vTxruNum(4), m_hTxruNum(4), m_connectMode(0)
+	{
+	}
+
+	AntennaParams (uint8_t vAntennaNum, uint8_t hAntennaNum, uint8_t polarNum, uint8_t vTxruNum, uint8_t hTxruNum, uint8_t connectMode)
+		: m_vAntennaNum (vAntennaNum), m_hAntennaNum (hAntennaNum), m_polarNum (polarNum), m_vTxruNum (vTxruNum), m_hTxruNum (hTxruNum), m_connectMode (connectMode)
+	{
+	}
+  	uint8_t m_vAntennaNum; //The number of vertical antenna elements
+   	uint8_t m_hAntennaNum; //The number of horizontal antenna elements
+	  uint8_t m_polarNum;    //The number of polarization dimension
+   	uint8_t m_vTxruNum;   //The number of vertical TXRUs
+   	uint8_t m_hTxruNum;   //The number of horizontal TXRUs
+    uint8_t m_connectMode; //Antenna connection mode (0:1-D full, 1:2-D full, 2,3)
+};
+//jskim14-end
+
 /**
  * \ingroup network
  * \defgroup netdevice Network Device

@@ -81,6 +81,7 @@ MmwaveSpectrumSignalParametersDataFrame::MmwaveSpectrumSignalParametersDataFrame
       packetBurst = p.packetBurst->Copy ();
     }
   ctrlMsgList = p.ctrlMsgList;
+  nrTxMode = p.nrTxMode; //180615-jskim14-NR tx mode parameter
 }
 
 Ptr<SpectrumSignalParameters>

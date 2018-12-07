@@ -66,6 +66,14 @@ NS_OBJECT_ENSURE_REGISTERED (MmWaveHelper);
 MmWaveHelper::MmWaveHelper(void)
 	:m_imsiCounter (0),
 	 m_cellIdCounter (0),
+	 m_nrTxMode (0), //180617-jskim14-add NR tx mode parameter
+	 //m_connectMode (0), //180702-jskim14-add antenna connection mode
+	 //m_noBsVTxrus (8), //180629-jskim14-add the number of vertical TXRUs
+	 //m_noBsHTxrus (4), //180629-jskim14-add the number of horizontal TXRUs
+	 //m_noBsPolar (2), // 180702-jskim14-add the number of polarazation dims 
+	 //m_noUeVTxrus (4), //180629-jskim14-add the number of vertical TXRUs
+	 //m_noUeHTxrus (2), //180629-jskim14-add the number of horizontal TXRUs
+	 //m_noUePolar (2), // 180702-jskim14-add the number of polarazation dims
 	 m_noTxAntenna (64),
 	 m_noRxAntenna (16),
 	 m_harqEnabled (false),
@@ -127,7 +135,7 @@ MmWaveHelper::GetTypeId (void)
 				      MakeStringAccessor (&MmWaveHelper::SetSchedulerType,
 				                          &MmWaveHelper::GetSchedulerType),
 				      MakeStringChecker ())
-	  .AddAttribute ("HarqEnabled",
+	  	.AddAttribute ("HarqEnabled",
 					"Enable Hybrid ARQ",
 					BooleanValue (true),
 					MakeBooleanAccessor (&MmWaveHelper::m_harqEnabled),
@@ -194,6 +202,61 @@ MmWaveHelper::GetTypeId (void)
                    UintegerValue (0),
                    MakeUintegerAccessor (&MmWaveHelper::m_imsiCounter),
                    MakeUintegerChecker<uint16_t> ())
+		//180615-jskim14-NR tx mode setting
+		.AddAttribute ("NrTxMode",
+                   "Tx mode for NR",
+                   UintegerValue (0),
+                   MakeUintegerAccessor (&MmWaveHelper::m_nrTxMode),
+                   MakeUintegerChecker<uint8_t> ())
+	    //jskim14-end
+		/*//180702-jskim14-antenna connection mode
+		.AddAttribute ("AntConnectMode",
+                   "Anntenna connection mode",
+                   UintegerValue (0),
+                   MakeUintegerAccessor (&MmWaveHelper::m_connectMode),
+                   MakeUintegerChecker<uint8_t> ())
+		//jskim14-end
+		//180629-jskim14-number of TXRU
+		.AddAttribute ("NumBsVerTxru",
+                   "The number of verical TXRUs in BS",
+                   UintegerValue (8),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noBsVTxrus),
+                   MakeUintegerChecker<uint8_t> ())
+		.AddAttribute ("NumBsHorTxru",
+                   "The number of horizontal TXRUs in BS",
+                   UintegerValue (4),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noBsHTxrus),
+                   MakeUintegerChecker<uint8_t> ())
+		.AddAttribute ("NumBsPolar",
+                   "The number of polarization dimensions in BS",
+                   UintegerValue (2),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noBsPolar),
+                   MakeUintegerChecker<uint8_t> ())
+		.AddAttribute ("NumUeVerTxru",
+                   "The number of verical TXRUs in UE",
+                   UintegerValue (4),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noUeVTxrus),
+                   MakeUintegerChecker<uint8_t> ())
+		.AddAttribute ("NumUeHorTxru",
+                   "The number of horizontal TXRUs in UE",
+                   UintegerValue (2),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noUeHTxrus),
+                   MakeUintegerChecker<uint8_t> ())
+		.AddAttribute ("NumUePolar",
+                   "The number of polarization dimensions in UE",
+                   UintegerValue (2),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noUePolar),
+                   MakeUintegerChecker<uint8_t> ())*/
+		.AddAttribute ("NumBsAntennas",
+                   "The number of antenna elements in BS",
+                   UintegerValue (64),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noTxAntenna),
+                   MakeUintegerChecker<uint16_t> ())	
+	    .AddAttribute ("NumUeAntenns",
+                   "The number of antenna elements in UE",
+                   UintegerValue (16),
+                   MakeUintegerAccessor (&MmWaveHelper::m_noRxAntenna),
+                   MakeUintegerChecker<uint16_t> ())	
    	;
 
 	return tid;
@@ -277,6 +340,7 @@ MmWaveHelper::DoInitialize()
 		else if(m_pathlossModelType == "ns3::MmWave3gppBuildingsPropagationLossModel")
 		{
 			m_pathlossModel->GetObject<MmWave3gppBuildingsPropagationLossModel>()->SetConfigurationParameters(m_phyMacCommon);
+			m_pathlossModel_2->GetObject<MmWave3gppBuildingsPropagationLossModel>()->SetConfigurationParameters(m_phyMacCommon_2);
 		}
 	}
 	else
@@ -330,8 +394,12 @@ MmWaveHelper::DoInitialize()
 
 		m_channel->AddSpectrumPropagationLossModel (m_3gppChannel);
 		m_3gppChannel->SetConfigurationParameters (m_phyMacCommon);
+		m_3gppChannel->SetNrTxMode (m_nrTxMode); // 180628-jskim14, set NR tx mode in 3gpp channel
 		m_channel_2->AddSpectrumPropagationLossModel (m_3gppChannel_2);
+		m_3gppChannel_2->isAdditionalMmWavePhy = true; //sjkang 0703
 		m_3gppChannel_2->SetConfigurationParameters (m_phyMacCommon_2);
+		m_3gppChannel_2->SetNrTxMode (m_nrTxMode); // 180628-jskim14, set NR tx mode in 3gpp channel
+		
 
 		if (m_pathlossModelType == "ns3::MmWave3gppBuildingsPropagationLossModel" || m_pathlossModelType == "ns3::MmWave3gppPropagationLossModel" )
 		{
@@ -628,14 +696,15 @@ MmWaveHelper::InstallSingleMcUeDevice(Ptr<Node> n)
 	// Phy part of MmWave
 	Ptr<MmWaveSpectrumPhy> mmWaveUlPhy = CreateObject<MmWaveSpectrumPhy> ();
 	Ptr<MmWaveSpectrumPhy> mmWaveDlPhy = CreateObject<MmWaveSpectrumPhy> ();
-	 mmWaveDlPhy->isAdditionalMmWave =false;//sjkang
-	   mmWaveUlPhy ->isAdditionalMmWave =false;//sjkang
+	mmWaveDlPhy->isAdditionalMmWave =false;//sjkang
+	mmWaveUlPhy->isAdditionalMmWave =false;//sjkang
+	mmWaveDlPhy->SetDownlink(true);  //180807-jskim14-check for downlink
 
 	Ptr<MmWaveSpectrumPhy> mmWaveUlPhy_2 = CreateObject<MmWaveSpectrumPhy> ();
 	Ptr<MmWaveSpectrumPhy> mmWaveDlPhy_2 = CreateObject<MmWaveSpectrumPhy> ();
-   mmWaveDlPhy_2->isAdditionalMmWave =true;//sjkang
-    mmWaveUlPhy_2 ->isAdditionalMmWave =true;//sjkang
-
+    mmWaveDlPhy_2->isAdditionalMmWave =true;//sjkang
+    mmWaveUlPhy_2->isAdditionalMmWave =true;//sjkang
+	mmWaveDlPhy_2->SetDownlink(true);  //180807-jskim14-check for downlink
 
 	Ptr<MmWaveUePhy> mmWavePhy = CreateObject<MmWaveUePhy> (mmWaveDlPhy, mmWaveUlPhy);
 	Ptr<MmWaveUePhy> mmWavePhy_2 = CreateObject<MmWaveUePhy> (mmWaveDlPhy_2, mmWaveUlPhy_2); ///sjkang
@@ -769,7 +838,7 @@ MmWaveHelper::InstallSingleMcUeDevice(Ptr<Node> n)
 	mmWaveDlPhy->SetChannel(m_channel);
 	//
 	mmWaveUlPhy_2->SetChannel(m_channel_2);
-   mmWaveDlPhy_2->SetChannel(m_channel_2);
+    mmWaveDlPhy_2->SetChannel(m_channel_2);
 
 	// Set LTE channel
 	lteUlPhy->SetChannel(m_uplinkChannel);
@@ -779,7 +848,7 @@ MmWaveHelper::InstallSingleMcUeDevice(Ptr<Node> n)
 	NS_ASSERT_MSG (mm, "MobilityModel needs to be set on node before calling MmWaveHelper::InstallUeDevice ()");
 	mmWaveUlPhy->SetMobility(mm);
 	mmWaveDlPhy->SetMobility(mm);
-  mmWaveUlPhy_2->SetMobility(mm);
+  	mmWaveUlPhy_2->SetMobility(mm);
   	mmWaveDlPhy_2->SetMobility(mm);
 
 	lteUlPhy->SetMobility(mm);
@@ -795,9 +864,20 @@ MmWaveHelper::InstallSingleMcUeDevice(Ptr<Node> n)
  	mmWaveUlPhy_2->SetAntenna (antenna_2);
 	mmWaveDlPhy_2->SetAntenna (antenna_2);
 
-	antenna = (m_lteUeAntennaModelFactory.Create ())->GetObject<AntennaModel> ();
-	lteUlPhy->SetAntenna (antenna);
-	lteDlPhy->SetAntenna (antenna);
+    //180702-jskim14-add antenna parameters
+	/*Ptr<AntennaArrayModel> ueUlAntennaArray = DynamicCast<AntennaArrayModel> (mmWaveUlPhy->GetRxAntenna ());
+	ueUlAntennaArray->SetAntParams (m_connectMode, m_noUeVTxrus, m_noUeHTxrus, m_noUePolar, m_noRxAntenna);
+	Ptr<AntennaArrayModel> ueDlAntennaArray = DynamicCast<AntennaArrayModel> (mmWaveDlPhy->GetRxAntenna ());
+	ueDlAntennaArray->SetAntParams (m_connectMode, m_noUeVTxrus, m_noUeHTxrus, m_noUePolar, m_noRxAntenna);
+	Ptr<AntennaArrayModel> ueUlAntennaArray_2 = DynamicCast<AntennaArrayModel> (mmWaveUlPhy_2->GetRxAntenna ());
+	ueUlAntennaArray_2->SetAntParams (m_connectMode, m_noUeVTxrus, m_noUeHTxrus, m_noUePolar, m_noRxAntenna);
+	Ptr<AntennaArrayModel> ueDlAntennaArray_2 = DynamicCast<AntennaArrayModel> (mmWaveDlPhy_2->GetRxAntenna ());
+	ueDlAntennaArray_2->SetAntParams (m_connectMode, m_noUeVTxrus, m_noUeHTxrus, m_noUePolar, m_noRxAntenna);*/
+	//jskim14-end
+
+	Ptr<AntennaModel> antennaLte = (m_lteUeAntennaModelFactory.Create ())->GetObject<AntennaModel> ();
+	lteUlPhy->SetAntenna (antennaLte);
+	lteDlPhy->SetAntenna (antennaLte);
 
 	// ----------------------- mmWave stack -------------
 	Ptr<MmWaveUeMac> mmWaveMac = CreateObject<MmWaveUeMac> ();
@@ -1438,6 +1518,13 @@ MmWaveHelper::InstallSingleEnbDevice (Ptr<Node> n)
 	dlPhy->SetAntenna (antenna);
 	ulPhy->SetAntenna (antenna);
 
+    //180702-jskim14-add antenna parameters
+	/*Ptr<AntennaArrayModel> dlAntennaArray = DynamicCast<AntennaArrayModel> (dlPhy->GetRxAntenna ());
+	dlAntennaArray->SetAntParams (m_connectMode, m_noBsVTxrus, m_noBsHTxrus, m_noBsPolar, m_noTxAntenna);
+	Ptr<AntennaArrayModel> ulAntennaArray = DynamicCast<AntennaArrayModel> (ulPhy->GetRxAntenna ());
+	ulAntennaArray->SetAntParams (m_connectMode, m_noBsVTxrus, m_noBsHTxrus, m_noBsPolar, m_noTxAntenna);*/
+	//jskim14-end
+
 	Ptr<MmWaveEnbMac> mac = CreateObject<MmWaveEnbMac> ();
 	mac->SetConfigurationParameters (m_phyMacCommon);
 	Ptr<MmWaveMacScheduler> sched = m_schedulerFactory.Create<MmWaveMacScheduler> ();
@@ -1474,6 +1561,15 @@ MmWaveHelper::InstallSingleEnbDevice (Ptr<Node> n)
 		rrc->AggregateObject (rrcProtocol);
 		rrcProtocol->SetCellId (cellId);
 	}
+    
+	//180617-jskim14
+	uint8_t nrTxMode = m_nrTxMode;
+	//180615-jskim14-NR tx mode setting
+	if(nrTxMode != 0)
+	{
+		rrc->SetDefaultTxMode(nrTxMode);
+	}
+	//jskim14-end
 
 	if (m_epcHelper != 0)
 	{
@@ -1658,6 +1754,13 @@ MmWaveHelper::InstallSingleEnbDevice_2 (Ptr<Node> n)
 	dlPhy->SetAntenna (antenna);
 	ulPhy->SetAntenna (antenna);
 
+    //180702-jskim14-add antenna parameters
+	/*Ptr<AntennaArrayModel> dlAntennaArray = DynamicCast<AntennaArrayModel> (dlPhy->GetRxAntenna ());
+	dlAntennaArray->SetAntParams (m_connectMode, m_noBsVTxrus, m_noBsHTxrus, m_noBsPolar, m_noTxAntenna);
+	Ptr<AntennaArrayModel> ulAntennaArray = DynamicCast<AntennaArrayModel> (ulPhy->GetRxAntenna ());
+	ulAntennaArray->SetAntParams (m_connectMode, m_noBsVTxrus, m_noBsHTxrus, m_noBsPolar, m_noTxAntenna);*/
+	//jskim14-end
+
 	Ptr<MmWaveEnbMac> mac = CreateObject<MmWaveEnbMac> ();
 	mac->SetConfigurationParameters (m_phyMacCommon_2);
 	Ptr<MmWaveMacScheduler> sched = m_schedulerFactory.Create<MmWaveMacScheduler> ();
@@ -1699,7 +1802,16 @@ MmWaveHelper::InstallSingleEnbDevice_2 (Ptr<Node> n)
 		rrc->AggregateObject (rrcProtocol);
 		rrcProtocol->SetCellId (cellId);
 	}
-
+	
+	//180617-jskim14
+	uint8_t nrTxMode = m_nrTxMode;
+	//180615-jskim14-NR tx mode setting
+	if(nrTxMode != 0)
+	{
+		rrc->SetDefaultTxMode(nrTxMode);
+	}
+	//jskim14-end
+	
 	if (m_epcHelper != 0)
 	{
 		EnumValue epsBearerToRlcMapping;
@@ -2037,7 +2149,7 @@ MmWaveHelper::AttachToClosestEnb (NetDeviceContainer ueDevices, NetDeviceContain
 	{
 		m_3gppChannel->Initial(ueDevices,mmWaveEnbDevices);
 		m_3gppChannel_2 ->isAdditionalMmWavePhy =true;
-		m_3gppChannel_2->Initial(ueDevices,mmWaveEnbDevices);
+		m_3gppChannel_2->Initial(ueDevices,mmWaveEnbDevices_2); //180603-jskim14
 	}
 	mmWaveEnbDevices.Add(mmWaveEnbDevices_2); //sjkang
 

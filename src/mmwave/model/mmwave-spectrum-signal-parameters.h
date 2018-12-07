@@ -87,6 +87,8 @@ struct MmwaveSpectrumSignalParametersDataFrame : public SpectrumSignalParameters
   uint16_t cellId;
 
   uint8_t slotInd;
+
+  uint8_t nrTxMode; //180615-jskim14-add NR tx mode parameter
 };
 
 

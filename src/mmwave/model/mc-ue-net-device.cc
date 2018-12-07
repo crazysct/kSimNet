@@ -649,4 +649,75 @@ McUeNetDevice::DoSend (Ptr<Packet> packet, const Address& dest, uint16_t protoco
   return m_nas->Send(packet);
 }
 
+//180704-jskim14-add new function for antenna parameters
+void
+McUeNetDevice::SetAntennaParams (uint8_t vAntennaNum, uint8_t hAntennaNum, uint8_t polarNum, uint8_t vTxruNum, uint8_t hTxruNum, uint8_t connectMode)
+{
+	m_antennaParams.m_vAntennaNum=vAntennaNum;
+	m_antennaParams.m_hAntennaNum=hAntennaNum;
+	m_antennaParams.m_polarNum=polarNum;
+	m_antennaParams.m_vTxruNum=vTxruNum;
+	m_antennaParams.m_hTxruNum=hTxruNum;
+	m_antennaParams.m_connectMode=connectMode;
+}
+
+//180716-jskim14-add new function for antenna rotation
+void
+McUeNetDevice::SetAntennaRotation (double alpha, double beta, double gamma, double pol) //input is degree
+{
+	m_rotation.x = alpha;
+	m_rotation.y = beta;
+	m_rotation.z = gamma;
+	m_pol = pol;
+}
+
+Vector
+McUeNetDevice::GetRotation ()
+{
+  return m_rotation;
+}
+
+double
+McUeNetDevice::GetPolarization ()
+{
+  return m_pol;
+}
+//jskim14-end
+
+uint8_t
+McUeNetDevice::GetVAntennaNum ()
+{
+	return m_antennaParams.m_vAntennaNum;
+}
+
+uint8_t
+McUeNetDevice::GetHAntennaNum ()
+{
+	return m_antennaParams.m_hAntennaNum;
+}
+
+uint8_t
+McUeNetDevice::GetPolarNum ()
+{
+	return m_antennaParams.m_polarNum;
+}
+
+uint8_t
+McUeNetDevice::GetVTxruNum ()
+{
+	return m_antennaParams.m_vTxruNum;
+}
+
+uint8_t
+McUeNetDevice::GetHTxruNum ()
+{
+	return m_antennaParams.m_hTxruNum;
+}
+
+uint8_t
+McUeNetDevice::GetConnectMode ()
+{
+	return m_antennaParams.m_connectMode;
+}
+//jskim14-end
 }

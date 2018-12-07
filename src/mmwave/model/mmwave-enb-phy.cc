@@ -1704,8 +1704,10 @@ MmWaveEnbPhy::DoSetPa (uint16_t rnti, double pa)
 void
 MmWaveEnbPhy::DoSetTransmissionMode (uint16_t  rnti, uint8_t txMode)
 {
-  NS_LOG_FUNCTION (this << rnti << (uint16_t)txMode);
+  NS_LOG_UNCOND (this << " MmWave Enb PHY rnti: " << rnti << " tx mode: " << (unsigned)txMode);
+  this->m_downlinkSpectrumPhy->SetNrTxMode(txMode); //180615-jskim14-NR tx mode setting to SpectrumPhy module
   // UL supports only SISO MODE
+  this->m_uplinkSpectrumPhy->SetNrTxMode(0); // 180617-jskim14
 }
 
 void

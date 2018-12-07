@@ -1080,6 +1080,7 @@ uint16_t GetRntifromCellIDAndImsi[60][60];
   void SetInterRatHoMode ();
   uint16_t  secondBestCellId=0;
   std::map<uint16_t, bool> m_updatestop ; //sjkang
+  void SetDefaultTxMode(uint8_t txMode); //180615-jskim14
   
 private:
 
