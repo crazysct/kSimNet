@@ -25,8 +25,10 @@
  *        	 	  Russell Ford <russell.ford@nyu.edu>
  *        		  Menglei Zhang <menglei@nyu.edu>
  *
- * Modified by: Michele Polese <michele.polese@gmail.com> 
+ * 	 Modified by: Michele Polese <michele.polese@gmail.com> 
  *                Dual Connectivity and Handover functionalities
+ * 
+ * 	 Modified by: Junseok Kim <jskim14@mwnl.snu.ac.kr>
  */
 
 
@@ -96,7 +98,7 @@ struct TbInfoElement
 	{
 	}
 
-	bool 			m_isUplink;		// is uplink grant?
+	bool 	  m_isUplink;		// is uplink grant?
 	uint8_t   m_slotIdx;		// slot index
 	uint32_t  m_rbBitmap;		// Resource Block Group bitmap
 	uint8_t   m_rbShift;		// shift for res alloc type 1
@@ -222,13 +224,19 @@ struct SlotAllocInfo
 	};
 
 	SlotAllocInfo () : m_tddMode(NA), m_isOmni (0), m_slotType (CTRL_DATA),
-			m_numCtrlSym(0), m_slotIdx (0), m_ctrlTxMode (DIGITAL), m_rnti (0)
+			m_numCtrlSym(0), m_slotIdx (0), m_ctrlTxMode (DIGITAL), m_rnti (0), m_layerInd(0)
 	{
 	}
 
 	SlotAllocInfo (uint8_t slotIdx, TddMode tddMode, TddSlotType slotType, CtrlTxMode ctrlTxMode, uint16_t rnti) :
 		m_tddMode(tddMode), m_isOmni (0), m_slotType (slotType),
-		m_numCtrlSym(0), m_slotIdx (slotIdx), m_ctrlTxMode (ctrlTxMode), m_rnti (rnti)
+		m_numCtrlSym(0), m_slotIdx (slotIdx), m_ctrlTxMode (ctrlTxMode), m_rnti (rnti), m_layerInd(0)
+	{
+	}
+
+	SlotAllocInfo (uint8_t slotIdx, TddMode tddMode, TddSlotType slotType, CtrlTxMode ctrlTxMode, uint16_t rnti, uint8_t layerInd) :
+		m_tddMode(tddMode), m_isOmni (0), m_slotType (slotType),
+		m_numCtrlSym(0), m_slotIdx (slotIdx), m_ctrlTxMode (ctrlTxMode), m_rnti (rnti), m_layerInd(layerInd)
 	{
 	}
 
@@ -263,21 +271,28 @@ struct SlotAllocInfo
 	uint16_t m_rnti;
 	struct DciInfoElementTdma m_dci;
 	std::vector<RlcPduInfo> m_rlcPduInfo;
+	uint8_t m_layerInd;
 	//std::list<MmWaveControlMessage> m_controlMessages;  // ctrl messages for this user
 };
 
 
 struct SfAllocInfo
 {
-	SfAllocInfo () : m_sfnSf (SfnSf()),  m_numSymAlloc (0), m_ulSymStart (0)
+	SfAllocInfo () : m_sfnSf (SfnSf()),  m_numSymAlloc (0), m_ulSymStart (0), m_numAllocLayers (1)
 	{
 		//m_tddPattern.resize (8);
 	}
 
-	SfAllocInfo (SfnSf sfn) : m_sfnSf (sfn), m_numSymAlloc (0), m_ulSymStart (0)
+	SfAllocInfo (SfnSf sfn) : m_sfnSf (sfn), m_numSymAlloc (0), m_ulSymStart (0), m_numAllocLayers (1)
 	{
 	}
 
+  	SfAllocInfo (SfnSf sfn, uint8_t numAllocLayers) : m_sfnSf (sfn),
+                                                    m_numSymAlloc (0),
+                                                    m_ulSymStart (0),
+                                                    m_numAllocLayers (numAllocLayers)
+  	{
+  	}
 	//SfAllocInfo& operator= (const SfAllocInfo &src)
 //	{
 //		m_sfnSf = src.m_sfnSf;
@@ -291,6 +306,7 @@ struct SfAllocInfo
 	SfnSf m_sfnSf;
 	uint32_t m_numSymAlloc;  // number of allocated slots
 	uint32_t m_ulSymStart;		 // start of UL region
+	uint8_t m_numAllocLayers;
 	//std::vector <SlotAllocInfo::TddMode> m_tddPattern;
 	std::deque <SlotAllocInfo> m_dlSlotAllocInfo;
 	std::deque <SlotAllocInfo> m_ulSlotAllocInfo;
@@ -809,6 +825,18 @@ public:
 		m_maxTbSizeBytes = bytes;
 	}
 
+  	void
+  	SetNumEnbLayers (uint8_t numEnbLayers)
+  	{
+    	m_numEnbLayers = numEnbLayers;
+  	}
+
+  	uint8_t
+  	GetNumEnbLayers (void)
+  	{
+    	return m_numEnbLayers;
+  	}
+
 private:
 	uint32_t m_symbolsPerSlot;
 	double   m_symbolPeriod; // in micro seconds
@@ -820,7 +848,7 @@ private:
 	uint32_t m_slotsPerSubframe;
 	uint32_t m_subframesPerFrame;
 	uint32_t m_numRefSymbols;
-  uint32_t m_numRbPerRbg;
+  	int32_t m_numRbPerRbg;
 
 	uint32_t m_numSubCarriersPerChunk;
 	uint32_t m_chunksPerRb;
@@ -843,6 +871,8 @@ private:
 	uint32_t m_maxTbSizeBytes;
 
 	std::string m_staticTddPattern;
+
+	uint8_t m_numEnbLayers;
 };
 
 }
