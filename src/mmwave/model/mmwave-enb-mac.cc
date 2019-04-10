@@ -836,7 +836,8 @@ MmWaveEnbMac::DoSchedConfigIndication (MmWaveMacSchedSapUser::SchedConfigIndPara
 					NS_ASSERT (rlcPduInfo.size () > 0);
 					SfnSf pduSfn = ind.m_sfnSf;
 					pduSfn.m_slotNum = slotAllocInfo.m_dci.m_symStart;
-					MacPduInfo macPduInfo (pduSfn, slotAllocInfo.m_dci.m_tbSize, rlcPduInfo.size (), dciElem);
+					//MacPduInfo macPduInfo (pduSfn, slotAllocInfo.m_dci.m_tbSize, rlcPduInfo.size (), dciElem);
+					MacPduInfo macPduInfo (pduSfn, slotAllocInfo.m_dci.m_tbSize, rlcPduInfo.size (), dciElem, ind.m_sfAllocInfo.m_numAllocLayers, slotAllocInfo.m_layerInd);
 					// insert into MAC PDU map
 					uint32_t tbMapKey = ((rnti & 0xFFFF) << 8) | (tbUid & 0xFF);
 					std::pair <std::map<uint32_t, struct MacPduInfo>::iterator, bool> mapRet =

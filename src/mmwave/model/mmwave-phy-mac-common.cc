@@ -156,6 +156,11 @@ MmWavePhyMacCommon::GetTypeId (void)
 									 UintegerValue (100.0),
 									 MakeUintegerAccessor (&MmWavePhyMacCommon::m_tbDecodeLatencyUs),
 									 MakeUintegerChecker<uint32_t> ())
+		.AddAttribute ("NumEnbLayers",
+                   "Number of layers for the MU-MIMO operation in eNB",
+                   UintegerValue (1),
+                   MakeUintegerAccessor (&MmWavePhyMacCommon::m_numEnbLayers),
+                   MakeUintegerChecker<uint8_t> ());
 	;
 
 	return tid;

@@ -220,6 +220,12 @@ MmWavePhy::SetMacPdu (Ptr<Packet> p)
 
 	if(p->PeekPacketTag (tag))
 	{
+		//We can store multiple packet burst (multiple layer) in the m_packetBurstMap
+		uint8_t numAllocLayers = tag.GetNumAllocLayers ();
+		if (numAllocLayers != 1){
+			//Use the key including m_layerInd (layer index)
+			//uint64_t key = tag.Encode();
+		}
 		NS_ASSERT((tag.GetSfn().m_sfNum >= 0) && (tag.GetSfn().m_sfNum < m_phyMacConfig->GetSymbolsPerSubframe ()));
 		std::map<uint32_t, Ptr<PacketBurst> >::iterator it = m_packetBurstMap.find (tag.GetSfn ().Encode());
 		if (it == m_packetBurstMap.end())

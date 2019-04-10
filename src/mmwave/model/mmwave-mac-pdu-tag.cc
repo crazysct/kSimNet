@@ -35,17 +35,27 @@ namespace ns3 {
 
 NS_OBJECT_ENSURE_REGISTERED (MmWaveMacPduTag);
 
-MmWaveMacPduTag::MmWaveMacPduTag () : m_sfnSf (SfnSf()), m_symStart(0), m_numSym(0), m_tagSize (6)
+MmWaveMacPduTag::MmWaveMacPduTag () : m_sfnSf (SfnSf()), m_symStart(0), m_numSym(0), m_numAllocLayers(1), m_layerInd(0), m_tagSize (8)
 {
 }
 
 MmWaveMacPduTag::MmWaveMacPduTag (SfnSf sfn)
-  :  m_sfnSf (sfn), m_symStart(0), m_numSym(0), m_tagSize (6)
+  :  m_sfnSf (sfn), m_symStart(0), m_numSym(0), m_numAllocLayers(1), m_layerInd(0), m_tagSize (8)
 {
 }
 
 MmWaveMacPduTag::MmWaveMacPduTag (SfnSf sfn, uint8_t symStart, uint8_t numSym)
-  :  m_sfnSf (sfn), m_symStart(symStart), m_numSym(numSym), m_tagSize (6)
+  :  m_sfnSf (sfn), m_symStart(symStart), m_numSym(numSym), m_numAllocLayers(1), m_layerInd(0), m_tagSize (8)
+{
+}
+
+MmWaveMacPduTag::MmWaveMacPduTag (SfnSf sfn, uint8_t symStart, uint8_t numSym, uint8_t numAllocLayers, uint8_t layerInd)
+  : m_sfnSf (sfn),
+    m_symStart (symStart),
+    m_numSym (numSym),
+    m_numAllocLayers (numAllocLayers),
+    m_layerInd (layerInd),
+    m_tagSize (8)
 {
 }
 
@@ -78,6 +88,8 @@ MmWaveMacPduTag::Serialize (TagBuffer i) const
 	i.WriteU8 (m_sfnSf.m_slotNum);
 	i.WriteU8 (m_symStart);
 	i.WriteU8 (m_numSym);
+	i.WriteU8 (m_numAllocLayers);
+	i.WriteU8 (m_layerInd);
 }
 
 void
@@ -88,7 +100,9 @@ MmWaveMacPduTag::Deserialize (TagBuffer i)
 	m_sfnSf.m_slotNum = (uint8_t)i.ReadU8 ();
 	m_symStart = (uint8_t)i.ReadU8 ();
 	m_numSym = (uint8_t)i.ReadU8 ();
-	m_tagSize = 6;
+	m_numAllocLayers = (uint8_t)i.ReadU8 ();
+	m_layerInd = (uint8_t)i.ReadU8 ();
+	m_tagSize = 8;
 }
 
 void
