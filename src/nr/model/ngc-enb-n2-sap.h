@@ -206,7 +206,6 @@ MemberNgcEnbN2SapProvider<C>::MemberNgcEnbN2SapProvider ()
 template <class C>
 void MemberNgcEnbN2SapProvider<C>::RegistrationRequest (uint64_t imsi, uint16_t rnti)
 {
-  cout<<"DoRegistrationRequest for Provider is called" << endl;
   m_owner->DoRegistrationRequest (imsi, rnti);
 }
 // jhlim

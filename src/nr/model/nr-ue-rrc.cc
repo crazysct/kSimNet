@@ -1264,7 +1264,7 @@ void
 NrUeRrc::DoRecvRrcConnectionSetup (NrRrcSap::RrcConnectionSetup msg)
 {
   NS_LOG_FUNCTION (this << " RNTI " << m_rnti <<ToString(m_state));
-  std::cout << "UE " << m_imsi << " receives RRC connection setup from eNB "<<m_cellId<< std::endl;
+//  std::cout << "UE " << m_imsi << " receives RRC connection setup from eNB "<<m_cellId<< std::endl;
   switch (m_state)
     {
     case IDLE_CONNECTING:
@@ -1297,7 +1297,7 @@ void
 NrUeRrc::DoRecvRrcConnectionReconfiguration (NrRrcSap::RrcConnectionReconfiguration msg)
 {
   NS_LOG_FUNCTION (this << " RNTI " << m_rnti << ToString(m_state));
-  std::cout << "UE receives RRC connection reconfiguration message from source eNB at time  "<<Simulator::Now().GetSeconds()<< std::endl;
+//  std::cout << "UE receives RRC connection reconfiguration message from source eNB at time  "<<Simulator::Now().GetSeconds()<< std::endl;
 if ((unsigned)(msg.HandoverCase)==0)//sjkang  // mmWave Stack of UE
 {
   switch (m_state)
@@ -2346,7 +2346,7 @@ NrUeRrc::ApplyRadioResourceConfigDedicated (NrRrcSap::RadioResourceConfigDedicat
        dtamIt != rrcd.drbToAddModList.end ();
        ++dtamIt)
     {
-      NS_LOG_UNCOND (this << " IMSI " << m_imsi << " adding/modifying DRBID " << (uint32_t) dtamIt->drbIdentity << " LC " << (uint32_t) dtamIt->logicalChannelIdentity);
+      //NS_LOG_UNCOND (this << " IMSI " << m_imsi << " adding/modifying DRBID " << (uint32_t) dtamIt->drbIdentity << " LC " << (uint32_t) dtamIt->logicalChannelIdentity);
       NS_ASSERT_MSG (dtamIt->logicalChannelIdentity > 2, "LCID value " << dtamIt->logicalChannelIdentity << " is reserved for SRBs");
 
       std::map<uint8_t, Ptr<NrDataRadioBearerInfo> >::iterator drbMapIt = m_drbMap.begin();

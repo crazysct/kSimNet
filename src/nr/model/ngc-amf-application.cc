@@ -138,14 +138,12 @@ void
 NgcAmfApplication::NamfCommunicationUeContextTransfer(uint64_t imsi)
 {
 	uint64_t context = imsi;
-	printf("Namf_Communication_UEContextTransfer\n");
 	NamfCommunicationUeContextTransferResponse(imsi, context);
 }
 
 void
 NgcAmfApplication::NamfCommunicationUeContextTransferResponse(uint64_t imsi, uint64_t context)
 {
-	printf("Namf_Communication_UEContextTransfer response\n");
 	// Now new AMF gets a UE's context from the old AMF.
 }
 

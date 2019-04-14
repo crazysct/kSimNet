@@ -1742,7 +1742,6 @@ UeManager::RecvRrcConnectionRequest (NrRrcSap::RrcConnectionRequest msg)
 
             if (!m_isMc_2 && !m_isMc && m_rrc->m_n2SapProvider != 0)
               {
-				std::cout << "RegistrationRequest is called" << std::endl;
                 m_rrc->m_n2SapProvider->RegistrationRequest (m_imsi, m_rnti);
               }
 
@@ -1757,7 +1756,7 @@ UeManager::RecvRrcConnectionRequest (NrRrcSap::RrcConnectionRequest msg)
                 m_rrc->m_connectionSetupTimeoutDuration,
                 &NrEnbRrc::ConnectionSetupTimeout, m_rrc, m_rnti);
             SwitchToState (CONNECTION_SETUP);
-            std::cout << "Enb " <<m_rrc->GetCellId()<<" receives RRC connection request from UE "<< GetImsi() <<std::endl;
+            //std::cout << "Enb " <<m_rrc->GetCellId()<<" receives RRC connection request from UE "<< GetImsi() <<std::endl;
 
           }
         else
@@ -1889,9 +1888,9 @@ UeManager::RecvRrcConnectionSetupCompleted (NrRrcSap::RrcConnectionSetupComplete
           // send the connection message, then, if capable, the UE will connect 
           NS_LOG_INFO("Send connect to " << m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second << " at least one mmWave eNB is not in outage");
          // std::cout << "NrEnbRrc :: Try to connect to mmWave cell" <<std::endl; //sjkang
-          std::cout << "Enb receives RRC connection setup completed message from UE "
-        		  << m_imsi<<", then first connection mmwave cellID is "<< m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second
-        		  <<std::endl;
+          //std::cout << "Enb receives RRC connection setup completed message from UE "
+//        		  << m_imsi<<", then first connection mmwave cellID is "<< m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second
+//        		  <<std::endl;
             m_rrc->m_rrcSapUser->SendRrcConnectToMmWave (m_rnti, m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second ,
         		  m_rrc->m_secondMmWaveCellForImsiMap.find(m_imsi)->second);//sjkang0205
             m_mmWaveCellId_first = m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second; //sjkang0313
@@ -2434,8 +2433,8 @@ UeManager::RecvSecondaryCellHandoverCompleted(NgcX2Sap::SecondaryHandoverComplet
         m_rrc->m_lastMmWaveCell[m_imsi] = m_mmWaveCellId_first;
         m_rrc->m_lastMmWaveCell_2[m_imsi] = m_mmWaveCellId; //sjkang0709 //this is second cellID
         m_rrc->m_mmWaveCellSetupCompleted[m_imsi] = true;
-        std::cout <<"Nr eNB receives RRC Connection reconfiguration complete message from UE "
-        		<< "Target Cell ID is "<<m_mmWaveCellId_first << "\t"<<m_mmWaveRnti<< " at time " << Simulator::Now().GetSeconds()<<std::endl;
+        //std::cout <<"Nr eNB receives RRC Connection reconfiguration complete message from UE "
+//        		<< "Target Cell ID is "<<m_mmWaveCellId_first << "\t"<<m_mmWaveRnti<< " at time " << Simulator::Now().GetSeconds()<<std::endl;
 
        NS_LOG_UNCOND("Imsi " << m_imsi << " m_mmWaveCellSetupCompleted set to " << m_rrc->m_mmWaveCellSetupCompleted[m_imsi] <<
                 " for cell " <<  m_rrc->m_lastMmWaveCell[m_imsi]);

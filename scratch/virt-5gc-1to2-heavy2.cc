@@ -210,7 +210,7 @@ TraceRtt (std::string rtt_tr_file_name)
 	for (uint16_t i = 0; i < numberOfNodes; i++) {
 		node = std::to_string(i);
 		tmp_path = path + node + "/RTT";
-		std::cout << tmp_path << std::endl;
+//		std::cout << tmp_path << std::endl;
 		Config::ConnectWithoutContext(tmp_path, MakeBoundCallback (&RttTracer, node));
 	}
 }

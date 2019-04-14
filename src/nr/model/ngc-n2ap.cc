@@ -301,7 +301,7 @@ NgcN2apEnb::DoSendRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id, u
   NS_LOG_INFO ("packetLen = " << packet->GetSize ());
 
   // Send the N2ap message through the socket
-  std::cout << "Sends packet to " <<amfIpAddr << ":" <<m_n2apUdpPort << std::endl; // jhlim
+//  std::cout << "Sends packet to " <<amfIpAddr << ":" <<m_n2apUdpPort << std::endl; // jhlim
   sourceSocket->SendTo (packet, 0, InetSocketAddress (amfIpAddr, m_n2apUdpPort));
 }
 
@@ -346,7 +346,7 @@ NgcN2apEnb::DoSendN2Message (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint64_t st
   NS_LOG_INFO ("packetLen = " << packet->GetSize ());
 
   // Send the N2ap message through the socket
-  std::cout << "Sends packet to " <<amfIpAddr << ":" <<m_n2apUdpPort << std::endl; // jhlim
+//  std::cout << "Sends packet to " <<amfIpAddr << ":" <<m_n2apUdpPort << std::endl; // jhlim
   sourceSocket->SendTo (packet, 0, InetSocketAddress (amfIpAddr, m_n2apUdpPort));
 }
 
@@ -873,7 +873,7 @@ NgcN2apAmf::DoSendN2Request (uint64_t amfUeN2Id,
   NS_LOG_INFO ("packetLen = " << packet->GetSize ());
 
   // Send the N2ap message through the socket
-  std::cout << "Sends packet to " <<enbIpAddr << ":" <<m_n2apUdpPort << std::endl; //smsohn
+//  std::cout << "Sends packet to " <<enbIpAddr << ":" <<m_n2apUdpPort << std::endl; //smsohn
   m_localN2APSocket->SendTo (packet, 0, InetSocketAddress (enbIpAddr, m_n2apUdpPort));
 }
 

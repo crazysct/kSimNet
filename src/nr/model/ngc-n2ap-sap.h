@@ -332,7 +332,6 @@ MemberNgcN2apSapAmf<C>::MemberNgcN2apSapAmf ()
 template <class C>
 void MemberNgcN2apSapAmf<C>::RegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint64_t imsi, uint16_t ecgi)
 {
-  std::cout<<"RegistrationRequest(1,2,3,4) is called" << std::endl;
   m_owner->DoRegistrationRequest(amfUeN2Id, enbUeN2Id, imsi, ecgi);
 }
 

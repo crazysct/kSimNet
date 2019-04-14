@@ -123,7 +123,6 @@ NgcEnbApplication::GetN2SapProvider ()
 void 
 NgcEnbApplication::SetN2apSapAmf (NgcN2apSapEnbProvider * s)
 {
-	std::cout << "SetN2apSapAmf for m_n2apSapEnbProvider is called" << std::endl;
 	m_n2apSapEnbProvider = s;
 }
 
@@ -131,7 +130,6 @@ NgcEnbApplication::SetN2apSapAmf (NgcN2apSapEnbProvider * s)
 void
 NgcEnbApplication::SetN2apSapAmf (NgcN2apSapAmf * s)
 {
-  std::cout << "SetN2apSapAmf for m_n2apSapAmf is called" << std::endl;
   m_n2apSapAmf = s;
 }
   
