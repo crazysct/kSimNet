@@ -403,10 +403,9 @@ UeManager::GetIsMc_2 () const //sjkang
 }
 
 void
-UeManager::SetupDataRadioBearer (EpsBearer bearer, uint8_t bearerId, uint32_t gtpTeid, Ipv4Address transportLayerAddress) 
+UeManager::SetupDataRadioBearer2 (EpsBearer bearer, uint8_t bearerId, uint32_t gtpTeid, Ipv4Address transportLayerAddress) 
 {
   NS_LOG_FUNCTION (this << (uint32_t) m_rnti);
-  std::cout << "SetupDataRadioBearer " <<std::endl;
   Ptr<NrDataRadioBearerInfo> drbInfo = CreateObject<NrDataRadioBearerInfo> ();
   uint8_t drbid = AddDataRadioBearerInfo (drbInfo);
   uint8_t lcid = Drbid2Lcid (drbid); 
@@ -517,7 +516,7 @@ UeManager::SetupDataRadioBearer (EpsBearer bearer, uint8_t bearerId, uint32_t gt
   drbInfo->m_epsBearer = bearer;
   drbInfo->m_isMc = false;
   drbInfo->m_isMc_2 =false;
-  ScheduleRrcConnectionReconfiguration ();
+  ScheduleRrcConnectionReconfiguration2 ();
 }
 //jhlim
 void
@@ -614,7 +613,7 @@ NrEnbRrc::DoSendReleaseDataRadioBearer (uint64_t imsi, uint16_t rnti, uint8_t be
 }
 
 void 
-UeManager::ScheduleRrcConnectionReconfiguration ()
+UeManager::ScheduleRrcConnectionReconfiguration2 ()
 {
   NS_LOG_FUNCTION (this << ToString(m_state));
   switch (m_state)
@@ -1678,7 +1677,7 @@ UeManager::RecvRlcSetupCompleted(uint8_t drbid)
   m_drbMap.find(drbid)->second->m_isMc = true; ///sjkang_un
   if (Mc_Count ==1){
   SwitchToState(PREPARE_MC_CONNECTION_RECONFIGURATION);
-  ScheduleRrcConnectionReconfiguration();
+  ScheduleRrcConnectionReconfiguration2();
 
   }else Mc_Count++;
 }
@@ -2627,7 +2626,7 @@ UeManager::CmacUeConfigUpdateInd (NrEnbCmacSapUser::UeConfig cmacParams)
   m_needPhyMacConfiguration = true;
 
   // reconfigure the UE RRC
-  ScheduleRrcConnectionReconfiguration ();
+  ScheduleRrcConnectionReconfiguration2 ();
 }
 
 
@@ -2681,7 +2680,7 @@ UeManager::SetSrsConfigurationIndex (uint16_t srsConfIndex)
       break;
 
     default:
-      ScheduleRrcConnectionReconfiguration ();
+      ScheduleRrcConnectionReconfiguration2 ();
       break;
     }
 }
@@ -2701,14 +2700,13 @@ UeManager::SetPdschConfigDedicated (NrRrcSap::PdschConfigDedicated pdschConfigDe
   m_needPhyMacConfiguration = true;
 
   // reconfigure the UE RRC
-  ScheduleRrcConnectionReconfiguration ();
+  ScheduleRrcConnectionReconfiguration2 ();
 }
 
 uint8_t
 UeManager::AddDataRadioBearerInfo (Ptr<NrDataRadioBearerInfo> drbInfo)
 {
   NS_LOG_FUNCTION (this);
-  std::cout << "Add Data Radio Bearer Info "<<std::endl;
   const uint8_t MAX_DRB_ID = 32;
   for (int drbid = (m_lastAllocatedDrbid + 1) % MAX_DRB_ID; 
        drbid != m_lastAllocatedDrbid; 
@@ -2916,7 +2914,7 @@ UeManager::SwitchToState (State newState)
       {
         if (m_pendingRrcConnectionReconfiguration == true)
           {
-            ScheduleRrcConnectionReconfiguration ();
+            ScheduleRrcConnectionReconfiguration2 ();
           }
       }
       break;
@@ -5166,7 +5164,7 @@ void
 NrEnbRrc::DoDataRadioBearerSetupRequest (NgcEnbN2SapUser::DataRadioBearerSetupRequestParameters request)
 {
  	Ptr<UeManager> ueManager = GetUeManager (request.rnti);
-   ueManager->SetupDataRadioBearer (request.flow, request.flowId, request.gtpTeid, request.transportLayerAddress);
+   ueManager->SetupDataRadioBearer2 (request.flow, request.bearerId, request.gtpTeid, request.transportLayerAddress);
 }
 // jhlim
 void
@@ -5251,7 +5249,7 @@ std::cout << "Target eNB " << GetCellId()<<" receives Handover Request  from sou
        it != req.bearers.end ();
        ++it)
     {
-      ueManager->SetupDataRadioBearer (it->erabLevelQosParameters, it->erabId, it->gtpTeid, it->transportLayerAddress);
+      ueManager->SetupDataRadioBearer2 (it->erabLevelQosParameters, it->erabId, it->gtpTeid, it->transportLayerAddress);
       NgcX2Sap::ErabAdmittedItem i;
       i.erabId = it->erabId;
       ackParams.admittedBearers.push_back (i);

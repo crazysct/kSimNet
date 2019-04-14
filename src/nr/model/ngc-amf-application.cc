@@ -200,8 +200,25 @@ NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id
   std::map<uint64_t, Ptr<UeInfo> >::iterator it = m_ueInfoMap.find (imsi);
   NS_ASSERT_MSG (it != m_ueInfoMap.end (), "could not find any UE with IMSI " << imsi);
   it->second->cellId = gci;
-  uint16_t cellId = it->second->cellId;
   std::string identityRequest;
+
+  /* jhlim: for the packet transfer */
+  NgcN11SapSmf::CreateSessionRequestMessage msg;
+  msg.imsi = imsi;
+  msg.uli.gci = gci;
+
+  for (std::list<BearerInfo>::iterator bit = it->second->bearersToBeActivated.begin ();
+  		bit != it->second->bearersToBeActivated.end ();
+		++bit)
+	 {
+		 NgcN11SapSmf::BearerContextToBeCreated bearerContext;
+		 bearerContext.epsBearerId = bit->bearerId;
+		 NS_LOG_INFO("Mme: sending as bearerId " << (uint32_t) bit->bearerId);
+		 bearerContext.bearerLevelQos = bit->bearer;
+		 bearerContext.tft = bit->tft;
+		 msg.bearerContextsToBeCreated.push_back (bearerContext);
+	 }
+	m_n11SapSmf->CreateSessionRequest (msg);
 
   // Conditional 4-5.
   //if(IsGuti(imsi)) 
@@ -213,7 +230,7 @@ NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id
   /* 
   identityRequest = "suci";
   printf("suci IdentityRequest\n");
-  m_n2apSapAmfProvider->SendIdentityRequest (amfUeN2Id, enbUeN2Id, cellId, identityRequest);
+  m_n2apSapAmfProvider->SendIdentityRequest (amfUeN2Id, enbUeN2Id, it->second->cellId, identityRequest);
   */
   // Conditional 8.
   // if old AMF exists,
@@ -224,13 +241,13 @@ NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id
   /*
   identityRequest = "pei";
   printf("pei IdentityRequest\n");
-  m_n2apSapAmfProvider->SendIdentityRequest (amfUeN2Id, enbUeN2Id, cellId, identityRequest);
+  m_n2apSapAmfProvider->SendIdentityRequest (amfUeN2Id, enbUeN2Id, it->second->cellId, identityRequest);
   */
   // 11-12. Registration Accept
   //     (5G-GUTI, Registration Area, PDU Session status, ...)
-  uint64_t guti = 1; // assign 5G-GUTI for UE
-  printf("AMF sends registration accept\n");
-  m_n2apSapAmfProvider->SendRegistrationAccept(amfUeN2Id, enbUeN2Id, cellId, guti);
+  ////uint64_t guti = 1; // assign 5G-GUTI for UE
+  ////printf("AMF sends registration accept\n");
+  ////m_n2apSapAmfProvider->SendRegistrationAccept(amfUeN2Id, enbUeN2Id, it->second->cellId, guti);
 }
 
 void

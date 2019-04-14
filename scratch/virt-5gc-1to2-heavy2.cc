@@ -483,11 +483,11 @@ wdlpf.remotePortEnd = dlPort;
 	
 
 //  Simulator::Schedule (Seconds (1.5 +numberOfNodes*0.2), &Graphh);
-  std::thread t(&Graph);
+//  std::thread t(&Graph);
 
   Simulator::Run();
 
-  t.join();
+//  t.join();
 
   Simulator::Destroy();
 

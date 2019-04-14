@@ -157,7 +157,7 @@ public:
    * \param transportLayerAddress  IP Address of the SMF, see 36.423 9.2.1
    * 
    */
-  void SetupDataRadioBearer (EpsBearer bearer, uint8_t bearerId, uint32_t gtpTeid, Ipv4Address transportLayerAddress);
+  void SetupDataRadioBearer2 (EpsBearer bearer, uint8_t bearerId, uint32_t gtpTeid, Ipv4Address transportLayerAddress);
 
   /** 
    * Start all configured data radio bearers. It is safe to call this
@@ -185,7 +185,7 @@ public:
    * schedule an RRC Connection Reconfiguration procedure with the UE
    * 
    */
-  void ScheduleRrcConnectionReconfiguration ();
+  void ScheduleRrcConnectionReconfiguration2 ();
 
   /** 
    * Start the handover preparation and send the handover request

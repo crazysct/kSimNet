@@ -379,6 +379,7 @@ NrPssFfMacScheduler::DoCschedUeConfigReq (const struct NrFfMacCschedSapProvider:
 void
 NrPssFfMacScheduler::DoCschedLcConfigReq (const struct NrFfMacCschedSapProvider::CschedLcConfigReqParameters& params)
 {
+	printf("[jhlim] nr-pss-ff-mac- scheduler.cc	DoCschedLcConfigReq.\n");
   NS_LOG_FUNCTION (this << " New LC, rnti: "  << params.m_rnti);
 
   std::map <uint16_t, pssFlowPerf_t>::iterator it;
