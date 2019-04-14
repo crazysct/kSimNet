@@ -1,0 +1,17 @@
+
+   diagram {
+
+   NrPdcp -> NrRlc [label="send SDU"]
+             NrRlc -> NrMacSapProvider [label="ReportBufferStatus ()"] 
+                       NrMacSapProvider -> NrUeMac [label="DoReportBufferStatus ()"] 
+                                          NrUeMac -->> NrEnbMac [label="send ideal CTRL message"]		       
+                       NrMacSapProvider <-- NrUeMac
+             NrRlc <-- NrMacSapProvider
+   NrPdcp <-- NrRlc 
+                                                        NrEnbMac ->  FfMacSchedSapProvider [label="SchedUlMacCtrlInfoReq ()"] 
+                                                                      FfMacSchedSapProvider ->  Scheduler [label="DoSchedUlMacCtrlInfoReq ()"] 
+                                                                      FfMacSchedSapProvider <-- Scheduler
+                                                        NrEnbMac <--  FfMacSchedSapProvider                                                                       
+   }          
+
+

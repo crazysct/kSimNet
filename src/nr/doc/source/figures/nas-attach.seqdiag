@@ -1,0 +1,24 @@
+
+diagram {
+	NgcUeNas; NrUeRrc; NrEnbRrc; NgcEnbApplication; NgcSmfUpfApplication; NgcAmf;	
+	
+	
+	NgcUeNas ->> NrUeRrc [label="ForceCampedOnEnb (CellId)"];
+	NgcUeNas ->> NrUeRrc [label="Connect"] 
+	NrUeRrc ->> NrEnbRrc [label="RRC Connection Request"]	
+	NrEnbRrc ->> NgcEnbApplication [label="initial UE message"]		
+	NgcEnbApplication ->> NgcAmf [label="N2-AP INITIAL UE MESSAGE"]
+	NgcAmf ->> NgcAmf [label="store IMSI->eNB UE id (RNTI) mapping"]
+	NgcAmf ->> NgcSmfUpfApplication [label="N11 CREATE SESSION"]
+	NgcSmfUpfApplication ->> NgcSmfUpfApplication [label="setup N2-U bearers"]
+	NgcAmf <<- NgcSmfUpfApplication [label="N11 CREATE SESSION RESPONSE"]
+	NgcEnbApplication <<- NgcAmf [label="N2-AP INITIAL CONTEXT SETUP (bearers to be created)"]
+	NgcEnbApplication ->> NgcAmf [label="N2-AP INITIAL CONTEXT SETUP RESPONSE"]
+	NgcEnbApplication ->> NgcEnbApplication [label="setup N2-U bearers"]	
+	NrEnbRrc <<- NgcEnbApplication [label="DataRadioBearerSetupRequest"]		
+	NrEnbRrc ->> NrEnbRrc  [label="setup data radio bearers"]
+	NrUeRrc <<- NrEnbRrc [label="RRC Connection Reconfiguration"]	
+	NrUeRrc ->> NrUeRrc  [label="setup data radio bearers"]
+	NrUeRrc ->> NrEnbRrc [label="RRC Connection Reconfiguration Completed"]
+}
+
