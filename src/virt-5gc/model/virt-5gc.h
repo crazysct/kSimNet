@@ -6,16 +6,16 @@
 
 #include "ns3/object.h"
 #include "ns3/node-container.h"
-#include "ns3/lte-helper.h"
-#include "ns3/epc-helper.h"
-#include "ns3/lte-module.h"
+#include "ns3/nr-helper.h"
+#include "ns3/ngc-helper.h"
+#include "ns3/nr-module.h"
 #include "ns3/position-allocator.h"
 #include "ns3/mobility-module.h"
 #include "ns3/trace-helper.h"
 #include "ns3/callback.h"
 #include "ns3/traced-value.h"
 #include "ns3/core-module.h"
-#include "ns3/ovs-point-to-point-epc-helper.h"
+//#include "ns3/ovs-point-to-point-epc-helper.h"
 
 #include <math.h>
 #include <iostream>
@@ -41,9 +41,9 @@ namespace ns3 {
 			void InitVirt5gc (void);
 			NodeContainer GetEnbNodes (void);
 			NodeContainer GetUeNodes (void);
-			Ptr<LteHelper> GetLteHelper (void);
-			//Ptr<PointToPointEpcHelper> GetEpcHelper (void);
-			Ptr<OvsPointToPointEpcHelper> GetEpcHelper (void);	
+			Ptr<NrHelper> GetNrHelper (void);
+			Ptr<PointToPointNgcHelper> GetNgcHelper (void);
+			//Ptr<OvsPointToPointEpcHelper> GetEpcHelper (void);	
 			
 			void Read (void);
 			void ReadVm(void);
@@ -76,9 +76,9 @@ namespace ns3 {
 			NodeContainer ueNodes;
 			NetDeviceContainer enbDevs;
 			NetDeviceContainer ueDevs;
-			Ptr<LteHelper> lteHelper;
-			//Ptr<PointToPointEpcHelper> epcHelper;
-			Ptr<OvsPointToPointEpcHelper> epcHelper;
+			Ptr<NrHelper> nrHelper;
+			Ptr<PointToPointNgcHelper> ngcHelper;
+			//Ptr<OvsPointToPointEpcHelper> epcHelper;
 			std::list<Virt5gcVm> vmList;
 			std::list<std::pair<int, int>> vm_nodeList;
 

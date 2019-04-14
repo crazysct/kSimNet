@@ -200,10 +200,10 @@ main (int argc, char *argv[])
 
   // parse again so you can override default values from the command line
   cmd.Parse(argc, argv);
-  Ptr<LteHelper> lteHelper = virt5gcHelper->GetLteHelper();
-  //Ptr<PointToPointEpcHelper> epcHelper = virt5gcHelper->GetEpcHelper();
-  Ptr<OvsPointToPointEpcHelper> epcHelper = virt5gcHelper->GetEpcHelper();
-  Ptr<Node> pgw = epcHelper->GetPgwNode ();
+  Ptr<NrHelper> nrHelper = virt5gcHelper->GetNrHelper();
+  Ptr<PointToPointNgcHelper> ngcHelper = virt5gcHelper->GetNgcHelper();
+  //Ptr<OvsPointToPointEpcHelper> epcHelper = virt5gcHelper->GetEpcHelper();
+  Ptr<Node> pgw = ngcHelper->GetUpfNode ();
 
    // Create a single RemoteHost
   NodeContainer remoteHostContainer;
@@ -252,20 +252,20 @@ main (int argc, char *argv[])
   totalNodeN = ueNodes.GetN() + enbNodes.GetN();
 
   // Install LTE Devices to the nodes
-  NetDeviceContainer enbLteDevs = lteHelper->InstallEnbDevice(enbNodes);
-  NetDeviceContainer ueLteDevs = lteHelper->InstallUeDevice(ueNodes);
+  NetDeviceContainer enbNrDevs = nrHelper->InstallEnbDevice(enbNodes);
+  NetDeviceContainer ueNrDevs = nrHelper->InstallUeDevice(ueNodes);
 
   // Install the IP stack on the UEs
   internet.Install (ueNodes);
   Ipv4InterfaceContainer ueIpIface;
-  ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueLteDevs));
+  ueIpIface = ngcHelper->AssignUeIpv4Address (NetDeviceContainer (ueNrDevs));
   // Assign IP address to UEs, and install applications
   for (uint32_t u = 0; u < ueNodes.GetN (); ++u)
     {
       Ptr<Node> ueNode = ueNodes.Get (u);
       // Set the default gateway for the UE
       Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (ueNode->GetObject<Ipv4> ());
-      ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
+      ueStaticRouting->SetDefaultRoute (ngcHelper->GetUeDefaultGatewayAddress (), 1);
     }
 
   
@@ -274,8 +274,8 @@ main (int argc, char *argv[])
 //  	  lteHelper->Attach (ueLteDevs.Get(i), enbLteDevs.Get(i));
 //  }
 
-  lteHelper->Attach (ueLteDevs.Get(0), enbLteDevs.Get(0));
-  lteHelper->Attach (ueLteDevs.Get(1), enbLteDevs.Get(0));
+  nrHelper->Attach (ueNrDevs.Get(0), enbNrDevs.Get(0));
+  nrHelper->Attach (ueNrDevs.Get(1), enbNrDevs.Get(0));
  
 
   uint16_t dlPort = 3000;
@@ -339,18 +339,18 @@ main (int argc, char *argv[])
 	  //appList.push_back(sinkApps);
 	  
 	 
-	  Ptr<EpcTft> tft = Create<EpcTft> ();
-	  EpcTft::PacketFilter dlpf;
+	  Ptr<NgcTft> tft = Create<NgcTft> ();
+	  NgcTft::PacketFilter dlpf;
 	  dlpf.localPortStart = dlPort;
 	  dlpf.remotePortEnd = dlPort;
 	  tft->Add(dlpf);
 
 	  EpsBearer bearer (EpsBearer::NGBR_VIDEO_TCP_OPERATOR);
-	  lteHelper->ActivateDedicatedEpsBearer (ueLteDevs.Get(0), bearer, tft);
+	  nrHelper->ActivateDedicatedEpsBearer (ueNrDevs.Get(0), bearer, tft);
  
  
   Simulator::Stop(Seconds(simTime));
-  lteHelper->EnableTraces (); 
+  nrHelper->EnableTraces (); 
 
   std::string thput_tr_file_name = "Virt5gc-throughput.data";
   AsciiTraceHelper ascii;

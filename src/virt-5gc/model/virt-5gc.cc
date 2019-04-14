@@ -196,11 +196,12 @@ namespace ns3 {
 		uint16_t i;
 		std::string tmp;
 
-		lteHelper = CreateObject<LteHelper> ();
-		epcHelper = CreateObject<OvsPointToPointEpcHelper> ();
-		lteHelper->SetEpcHelper(epcHelper);
+		nrHelper = CreateObject<NrHelper> ();
+		//epcHelper = CreateObject<OvsPointToPointEpcHelper> ();
+		ngcHelper = CreateObject<PointToPointNgcHelper> ();
+		nrHelper->SetNgcHelper(ngcHelper);
 
-		/* Generate Lte components (PGW/SGW, eNB, UE)
+		/* Generate Nr components (PGW/SGW, eNB, UE)
 		 * MME is not implemented yet
 		 */
 		for (i = 0; i < totNode && !topgen.eof(); i++)
@@ -263,8 +264,8 @@ namespace ns3 {
 
 		AllocNodesPosition(ueCoords, enbCoords);
 
-		enbDevs = lteHelper->InstallEnbDevice (enbNodes);
-		ueDevs = lteHelper->InstallUeDevice (ueNodes);
+		enbDevs = nrHelper->InstallEnbDevice (enbNodes);
+		ueDevs = nrHelper->InstallUeDevice (ueNodes);
 
 		/* Read linking information in the topology file
 		 * and map the Ue nodes and Enb nodes
@@ -804,16 +805,17 @@ namespace ns3 {
 		return ueNodes;
 	}
 
-	Ptr<LteHelper>
-	Virt5gc::GetLteHelper (void)
+	Ptr<NrHelper>
+	Virt5gc::GetNrHelper (void)
 	{
-		return lteHelper;
+		return nrHelper;
 	}
 
-	Ptr<OvsPointToPointEpcHelper>
-	Virt5gc::GetEpcHelper (void)
+	//Ptr<OvsPointToPointEpcHelper>
+	Ptr<PointToPointNgcHelper>
+	Virt5gc::GetNgcHelper (void)
 	{
-		return epcHelper;
+		return ngcHelper;
 	}
 
 	NetDeviceContainer
