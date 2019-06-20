@@ -18,7 +18,8 @@ ax4 = fig.add_subplot(1,1,1)
 #ax2 = fig.add_subplot(2,2,2)
 def animate(i):
 	
-	a4_1 = open ( "UE-1-0-Dl-Sinr.txt", 'r')
+	a4_1 = open ( "UE-10-0-Dl-Sinr.txt", 'r')
+	a4_2 = open ( "UE-11-0-Dl-Sinr.txt", 'r')
 	#a4_2 = open ( "rlc_Tput_senb1_ue1_bearer_1.txt",'r')
 	#a4_3 = open ("udp_throughput_ue1.txt",'r')
 	
@@ -33,14 +34,15 @@ def animate(i):
 
 	
 	(x3_1,y3_1) = getList(a4_1)
-	#(x3_2,y3_2) = getList(a4_2)
+	(x3_2,y3_2) = getList(a4_2)
 	#(x3_3,y3_3) = getList(a4_3)
 
 	
 	
 	ax4.clear()
 	#plt.plot(x3_1,y3_1,label = "mmWave Throughput1")
-	plt.plot(x3_1,y3_1)
+	plt.plot(x3_1,y3_1, 'b-', label = "w/o building")
+	plt.plot(x3_2,y3_2, 'r-', label = "w/ building")
 	plt.ylim([0, 55]) 
 	plt.xlim([0, 6])
 	#ax4.plot(x3_2, y3_2, label = "mmWave Throughput2")
