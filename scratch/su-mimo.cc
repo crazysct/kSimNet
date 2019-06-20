@@ -374,6 +374,7 @@ int main(int argc, char *argv[])
 	// Config::SetDefault ("ns3::LteEnbRrc::EpsBearerToRlcMapping", EnumValue (ns3::LteEnbRrc::RLC_AM_ALWAYS));
 	Config::SetDefault("ns3::McUePdcp::EnableReordering", BooleanValue(isEnablePdcpReordering));
 	Config::SetDefault("ns3::MmWaveHelper::RlcAmEnabled", BooleanValue(rlcAmEnabled));
+	Config::SetDefault("ns3::MmWaveHelper::EnableBuildings", BooleanValue(enableBuildings));
 	Config::SetDefault("ns3::MmWaveHelper::HarqEnabled", BooleanValue(harqEnabled));
 	Config::SetDefault("ns3::MmWaveHelper::NrTxMode", UintegerValue(nrTxMode));
 	Config::SetDefault("ns3::MmWaveHelper::UseIdealRrc", BooleanValue(useIdealRrc));
