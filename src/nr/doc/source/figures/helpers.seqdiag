@@ -1,0 +1,24 @@
+
+
+diagram {
+
+SimProgram; NrHelper; NgcHelper; 
+
+SimProgram ->> NrHelper [label="create"]
+SimProgram ->> NgcHelper [label="create"]
+NgcHelper ->> NgcHelper [label="create AMF and SMF/UPF"]
+SimProgram ->> NrHelper [label="InstallEnbDevice"] 
+NrHelper ->> NrHelper [label="install protocol stack on eNB"]
+NrHelper ->> NgcHelper [label="AddEnb"]
+NgcHelper ->> NgcHelper [label="setup N2-U, N2-AP and N11"]
+SimProgram ->> NrHelper [label="InstallUeDevice"] 
+NrHelper ->> NrHelper [label="install protocol stack on UE"]
+SimProgram ->> NrHelper [label="Attach (UE, eNB)"] 
+NrHelper ->> NrHelper [label="tell UE NAS to start connection"]
+NrHelper ->> NgcHelper [label="ActivateEpsBearer (default)"]
+NgcHelper ->> NgcHelper [label="tell AMF to activate bearer when UE connects"]
+SimProgram ->> NrHelper [label="ActivateDedicatedEpsBearer"]
+NrHelper ->> NgcHelper [label="ActivateEpsBearer"] 
+NgcHelper ->> NgcHelper [label="tell AMF to activate bearer when UE connects"]
+
+}

@@ -1087,7 +1087,7 @@ void
 LteUeRrc::DoRecvRrcConnectionSetup (LteRrcSap::RrcConnectionSetup msg)
 {
   NS_LOG_FUNCTION (this << " RNTI " << m_rnti <<ToString(m_state));
-  std::cout << "UE " << m_imsi << " receives RRC connection setup from eNB "<<m_cellId<< std::endl;
+  //std::cout << "UE " << m_imsi << " receives RRC connection setup from eNB "<<m_cellId<< std::endl;
   switch (m_state)
     {
     case IDLE_CONNECTING:
@@ -1120,7 +1120,7 @@ void
 LteUeRrc::DoRecvRrcConnectionReconfiguration (LteRrcSap::RrcConnectionReconfiguration msg)
 {
   NS_LOG_FUNCTION (this << " RNTI " << m_rnti << ToString(m_state));
-  std::cout << "UE receives RRC connection reconfiguration message from source eNB at time  "<<Simulator::Now().GetSeconds()<< std::endl;
+ // std::cout << "UE receives RRC connection reconfiguration message from source eNB at time  "<<Simulator::Now().GetSeconds()<< std::endl;
 if ((unsigned)(msg.HandoverCase)==0)//sjkang  // mmWave Stack of UE
 {
   switch (m_state)
@@ -2164,7 +2164,7 @@ LteUeRrc::ApplyRadioResourceConfigDedicated (LteRrcSap::RadioResourceConfigDedic
 
       if (drbMapIt == m_drbMap.end ())
         {
-          NS_LOG_UNCOND ("New Data Radio Bearer");
+          //NS_LOG_UNCOND ("New Data Radio Bearer");
 
           TypeId rlcTypeId;
           if (m_useRlcSm)

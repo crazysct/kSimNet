@@ -302,7 +302,7 @@ UeManager::DoDispose ()
 {
   delete m_drbPdcpSapUser;
   m_rlcMap.clear();
-  std::cout << "LteEnb will destroy UeManager   ----->" <<std::endl;
+  //std::cout << "LteEnb will destroy UeManager   ----->" <<std::endl;
   // delete eventual X2-U TEIDs
   for (std::map <uint8_t, Ptr<LteDataRadioBearerInfo> >::iterator it = m_drbMap.begin ();
        it != m_drbMap.end ();
@@ -636,7 +636,7 @@ UeManager::ScheduleRrcConnectionReconfiguration ()
         msg.radioResourceConfigDedicated.physicalConfigDedicated.haveAntennaInfoDedicated = false;
         msg.radioResourceConfigDedicated.physicalConfigDedicated.haveSoundingRsUlConfigDedicated = false;
         msg.radioResourceConfigDedicated.physicalConfigDedicated.havePdschConfigDedicated = false;
-       std::cout << "Enb will send RRC connection reconfiguration message to UE " <<m_rnti << std::endl;
+       //std::cout << "Enb will send RRC connection reconfiguration message to UE " <<m_rnti << std::endl;
         m_rrc->m_rrcSapUser->SendRrcConnectionReconfiguration (m_rnti, msg);
         RecordDataRadioBearersToBeStarted ();
         SwitchToState (MC_CONNECTION_RECONFIGURATION);
@@ -1696,7 +1696,7 @@ UeManager::RecvRrcConnectionRequest (LteRrcSap::RrcConnectionRequest msg) //sjka
                 m_rrc->m_connectionSetupTimeoutDuration,
                 &LteEnbRrc::ConnectionSetupTimeout, m_rrc, m_rnti);
             SwitchToState (CONNECTION_SETUP);
-            std::cout << "Enb " <<m_rrc->GetCellId()<<" receives RRC connection request from UE "<< GetImsi() <<std::endl;
+            //std::cout << "Enb " <<m_rrc->GetCellId()<<" receives RRC connection request from UE "<< GetImsi() <<std::endl;
 
           }
         else
@@ -1762,9 +1762,9 @@ UeManager::RecvRrcConnectionSetupCompleted (LteRrcSap::RrcConnectionSetupComplet
           // send the connection message, then, if capable, the UE will connect 
           NS_LOG_INFO("Send connect to " << m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second << " at least one mmWave eNB is not in outage");
          // std::cout << "LteEnbRrc :: Try to connect to mmWave cell" <<std::endl; //sjkang
-          std::cout << "Enb receives RRC connection setup completed message from UE "
-        		  << m_imsi<<", then first connection mmwave cellID is "<< m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second
-        		  <<std::endl;
+          //std::cout << "Enb receives RRC connection setup completed message from UE "
+//        		  << m_imsi<<", then first connection mmwave cellID is "<< m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second
+//        		  <<std::endl;
             m_rrc->m_rrcSapUser->SendRrcConnectToMmWave (m_rnti, m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second ,
         		  m_rrc->m_secondMmWaveCellForImsiMap.find(m_imsi)->second);//sjkang0205
             m_mmWaveCellId_first = m_rrc->m_bestMmWaveCellForImsiMap.find(m_imsi)->second; //sjkang0313
