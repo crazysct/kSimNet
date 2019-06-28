@@ -212,6 +212,8 @@ NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id
 void 
 NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint64_t imsi, uint16_t gci)
 {
+  //demo log
+  std::cout << "NgcAmfApplication::DoRegistrationRequest() - AMF receives registration request from (R)AN" << std::endl;
   NS_LOG_FUNCTION (this << amfUeN2Id << enbUeN2Id << imsi << gci);
   std::map<uint64_t, Ptr<UeInfo> >::iterator it = m_ueInfoMap.find (imsi);
   NS_ASSERT_MSG (it != m_ueInfoMap.end (), "could not find any UE with IMSI " << imsi);
@@ -245,7 +247,7 @@ NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id
   // if neither UE nor old AMF send SUCI
    
   identityRequest = "suci";
-  printf("suci IdentityRequest\n");
+  //printf("suci IdentityRequest\n");
   m_n2apSapAmfProvider->SendIdentityRequest (amfUeN2Id, enbUeN2Id, it->second->cellId, identityRequest);
   
   // Conditional 8.

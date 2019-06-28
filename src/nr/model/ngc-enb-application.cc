@@ -178,6 +178,8 @@ NgcEnbApplication::DoAmfSelection(uint64_t imsi)
 void 
 NgcEnbApplication::DoRegistrationRequest (uint64_t imsi, uint16_t rnti)
 {
+  //demo log
+  std::cout << "NgcEnbApplication::DoRegistrationRequest() - (R)AN sends registration request" << std::endl;
   NS_LOG_FUNCTION (this);
   // side effect: create entry if not exist
   m_imsiRntiMap[imsi] = rnti;

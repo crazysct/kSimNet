@@ -837,6 +837,9 @@ NrUeRrc::DoNotifyRandomAccessSuccessful ()
 
         */
 
+	//demo log
+	std::cout << "NrUeRrc::DoNotifyRandomAccessSucessful() - UE sends RRC connection request" << std::endl;
+
         m_rrcSapUser->SendRrcConnectionRequest (msg); 
 
         m_connectionTimeout = Simulator::Schedule (m_t300,
@@ -1425,7 +1428,7 @@ void
 NrUeRrc::DoRecvRrcIdentityRequest (NrRrcSap::RrcIdentityRequest msg)
 {
   NS_LOG_FUNCTION (this << " RNTI " << m_rnti << ToString(m_state));
-  std::cout << "UE receives RRC identity request message from source eNB at time  "<<Simulator::Now().GetSeconds()<< std::endl;
+  std::cout << "NrUeRrc:DoRecvRrcIdentityRequest() - UE receives RRC identity request message from source (R)AN at time  "<<Simulator::Now().GetSeconds()<< std::endl;
   
   NrRrcSap::RrcIdentityResponse msg2;
   m_rrcSapUser->SendRrcIdentityResponse (msg2);

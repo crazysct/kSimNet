@@ -667,7 +667,7 @@ void
 UeManager::ScheduleRrcIdentityRequest ()
 {
   NS_LOG_FUNCTION (this << ToString(m_state));
-  std::cout << "Enb will send identity request message to UE " <<m_rnti << std::endl;
+  std::cout << "UeManager::SchedulerRrcIdentityRequest() - (R)AN will send identity request message to UE " <<m_rnti << std::endl;
   NrRrcSap::RrcIdentityRequest msg = BuildRrcIdentityRequest ();
   m_rrc->m_rrcSapUser->SendRrcIdentityRequest (m_rnti, msg);
 }
@@ -1714,7 +1714,8 @@ void
 UeManager::RecvRrcConnectionRequest (NrRrcSap::RrcConnectionRequest msg)
 {
   NS_LOG_FUNCTION (this<<"nr-enb-rrc::UeManager"<< ToString(m_state));
- 
+  //demo log
+  std::cout << "UeManager::RecvRrcConnectionRequest() - (R)AN receives RRC connection request from UE" << std::endl;
   switch (m_state)
     {
     case INITIAL_RANDOM_ACCESS:
