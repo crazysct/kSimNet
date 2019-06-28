@@ -440,6 +440,7 @@ NgcN2apEnb::DoSendIdentityResponse (uint64_t amfUeN2Id,
               uint16_t enbUeN2Id) 
 {
   NS_LOG_FUNCTION (this);
+  std::cout << "NgcN2apEnb::DoSendIdentityResponse() - UE sends Identity Response" << std::endl;
 
   NS_LOG_LOGIC("amfUeN2apId = " << amfUeN2Id);
   NS_LOG_LOGIC("enbUeN2apId = " << enbUeN2Id);
@@ -475,11 +476,13 @@ NgcN2apEnb::DoSendIdentityResponse (uint64_t amfUeN2Id,
   // Send the N2ap message through the socket
   sourceSocket->SendTo (packet, 0, InetSocketAddress (amfIpAddr, m_n2apUdpPort));
 }
+
 void 
 NgcN2apEnb::DoSendRegistrationComplete (uint64_t amfUeN2Id,
               uint16_t enbUeN2Id) 
 {
   NS_LOG_FUNCTION (this);
+  std::cout << "NgcN2apEnb::DoSendRegistrationComplete() - UE sends Registration Complete" << std::endl;
 
   NS_LOG_LOGIC("amfUeN2apId = " << amfUeN2Id);
   NS_LOG_LOGIC("enbUeN2apId = " << enbUeN2Id);
@@ -797,6 +800,8 @@ NgcN2apAmf::DoSendIdentityRequest (uint64_t amfUeN2Id,
 {
   NS_LOG_FUNCTION (this);
 
+  std::cout << "NgcN2apAmf::DoSendIdentityRequest() - AMF sends Identity Request" << std::endl;
+
   NS_LOG_LOGIC("amfUeN2apId = " << amfUeN2Id);
   NS_LOG_LOGIC("enbUeN2apId = " << enbUeN2Id);
   NS_LOG_LOGIC("eNB id = " << cellId);
@@ -881,6 +886,7 @@ void
 NgcN2apAmf::DoSendRegistrationAccept (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint16_t cellId, uint64_t guti)
 {
   NS_LOG_FUNCTION (this);
+  std::cout << "NgcN2apAmf::DoSendRegistrationAccept() - AMF sends Registration Accept" << std::endl; 
 
   NS_LOG_LOGIC("amfUeN2apId = " << amfUeN2Id);
   NS_LOG_LOGIC("enbUeN2apId = " << enbUeN2Id);

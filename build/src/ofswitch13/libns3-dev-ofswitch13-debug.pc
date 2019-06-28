@@ -1,0 +1,10 @@
+prefix=/usr/local
+libdir=/usr/local/lib
+includedir=/usr/local/include/ns3-dev
+
+Name: libns3-ofswitch13
+Description: ns-3 module ns3-ofswitch13
+Version: 3-dev
+Libs: -L${libdir} -Wl,-Bdynamic -lns3-dev-ofswitch13-debug -L/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/udatapath -ldl -lnbee -lns3ofswitch13
+Cflags: -I${includedir} -DNS3_OFSWITCH13 -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13 -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/include -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/lib -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/oflib -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/oflib-exp -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/secchan -I/home/jhlim/kSimNet/src/ofswitch13/lib/ofsoftswitch13/udatapath
+Requires: libns3-dev-core-debug libns3-dev-network-debug libns3-dev-internet-debug libns3-dev-csma-debug libns3-dev-point-to-point-debug libns3-dev-virtual-net-device-debug libns3-dev-applications-debug

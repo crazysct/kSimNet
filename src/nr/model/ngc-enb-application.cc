@@ -183,6 +183,7 @@ NgcEnbApplication::DoRegistrationRequest (uint64_t imsi, uint16_t rnti)
   m_imsiRntiMap[imsi] = rnti;
 
   /* jhlim: 2. AMF Selection */
+  std::cout << "NgcEnbApplication::DoRegistrationRequest() - (R)AN do AMF selection" << std::endl;
   if(m_n2apSapEnbProvider == NULL)
 	  m_n2apSapAmf = DoAmfSelection(imsi);
 	  

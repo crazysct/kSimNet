@@ -135,24 +135,42 @@ NgcAmfApplication::AddBearer (uint64_t imsi, Ptr<NgcTft> tft, EpsBearer bearer)
 
 /* jhlim */
 void
-NgcAmfApplication::NamfCommunicationUeContextTransfer(uint64_t imsi)
+NgcAmfApplication::SendNamfCommunicationUeContextTransfer (uint64_t imsi)
 {
-	uint64_t context = imsi;
-	NamfCommunicationUeContextTransferResponse(imsi, context);
+	std::cout << "NgcAmfApplication::SendNamfCommunicationUeContextTransfer() - New AMF sends Namf_Communication_UEContextTransfer to Old AMF" << std::endl; 
+	DoNamfCommunicationUeContextTransfer (imsi);
 }
 
 void
-NgcAmfApplication::NamfCommunicationUeContextTransferResponse(uint64_t imsi, uint64_t context)
+NgcAmfApplication::DoNamfCommunicationUeContextTransfer (uint64_t imsi)
 {
+	std::cout << "NgcAmfApplication::DoNamfCommunicationUeContextTransfer() - Old AMF does Namf_Communication_UEContextTransfer" << std::endl; 
+	uint64_t context = imsi;
+	SendNamfCommunicationUeContextTransferResponse(imsi, context);
+}
+
+void
+NgcAmfApplication::SendNamfCommunicationUeContextTransferResponse (uint64_t imsi, uint64_t context)
+{
+	std::cout << "NgcAmfApplication::SendNamfCommunicationUeContextTransferResponse() - Old AMF sends Namf_Communication_UEContextTransfer response to New AMF" << std::endl;
+	DoNamfCommunicationUeContextTransferResponse (imsi, context);
+}
+
+void
+NgcAmfApplication::DoNamfCommunicationUeContextTransferResponse (uint64_t imsi, uint64_t context)
+{
+	std::cout << "NgcAmfApplication::DoNamfCommunicationUeContextTransferResponse() - New AMF does Namf_Communication_UEContextTransfer response" << std::endl;
 	// Now new AMF gets a UE's context from the old AMF.
 }
 
 void
-NgcAmfApplication::NamfCommunicationRegistrationCompleteNotify(uint64_t imsi)
+NgcAmfApplication::SendNamfCommunicationRegistrationCompleteNotify (uint64_t imsi)
 {
+	std::cout << "NgcAmfAPplication::SendNamfCommunicationRegistrationCompleteNotify() - New AMF sends Namf_Communication_RegistrationCompleteNotify to Old AMF" << std::endl;
 }
+
 bool
-NgcAmfApplication::IsGuti(uint64_t imsi)
+NgcAmfApplication::IsGuti (uint64_t imsi)
 {
 	//check whether imsi is GUTI or not.
 	return false;
@@ -221,15 +239,15 @@ NgcAmfApplication::DoRegistrationRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id
   // Conditional 4-5.
   //if(IsGuti(imsi)) 
   // if GUTI exists, 
-   NamfCommunicationUeContextTransfer(imsi); // call this to Old AMF.  
+  //	NamfCommunicationUeContextTransfer(imsi); // call this to Old AMF.  
   
   // Conditional 6-7. Identity Request message to UE by NAS signal
   // if neither UE nor old AMF send SUCI
-  /* 
+   
   identityRequest = "suci";
   printf("suci IdentityRequest\n");
   m_n2apSapAmfProvider->SendIdentityRequest (amfUeN2Id, enbUeN2Id, it->second->cellId, identityRequest);
-  */
+  
   // Conditional 8.
   // if old AMF exists,
   // NamfCommunicationRegistrationCompleteNotify(imsi);
@@ -253,20 +271,21 @@ NgcAmfApplication::DoRegistrationComplete (uint64_t amfUeN2Id, uint16_t enbUeN2I
 {
 	NS_LOG_FUNCTION (this);
 	NS_LOG_INFO("Registration Compelete.");
-
+	std::cout << "NgcAmfApplication::DoRegistrationComplete() - Registration complete" << std::endl;
 }
 // jhlim
 void 
 NgcAmfApplication::DoIdentityResponse (uint64_t amfUeN2Id, uint16_t enbUeN2Id)
 {
-  NS_LOG_FUNCTION (this << amfUeN2Id << enbUeN2Id);
+	NS_LOG_FUNCTION (this << amfUeN2Id << enbUeN2Id);
+	std::cout << "NgcAmfApplication::DoIdentityResponse() - New AMF does identity response " << std::endl;
 }
 
 // hmlee
 void
 NgcAmfApplication::DoNsmfPDUSessionUpdateSMContext()
 {
-
+	NS_LOG_FUNCTION (this);
 }
 
 // hmlee
