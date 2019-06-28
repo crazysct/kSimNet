@@ -302,16 +302,8 @@ public:
 
   virtual void InitialContextSetupResponse (uint64_t amfUeN2Id, uint16_t enbUeN2Id, std::list<ErabSetupItem> erabSetupList);
   virtual void PathSwitchRequest (uint64_t enbUeN2Id, uint64_t amfUeN2Id, uint16_t cgi, std::list<ErabSwitchedInDownlinkItem> erabToBeSwitchedInDownlinkList);
-  // jhlim
-  //virtual void IdentityRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint16_t cellId);
   virtual void IdentityResponse (uint64_t amfUeN2Id, uint16_t enbUeN2Id);
   virtual void RegistrationComplete (uint64_t amfUeN2Id, uint16_t enbUeN2Id);
-  // jhlim
-  //virtual void DoIdentityResponse (uint64_t imsi, uint16_t rnti) = 0;
-  //virtual void DoIdentityRequest (uint64_t imsi, uint16_t rnti) = 0;
-  //virtual void SendIdentityRequest (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint16_t cellId);
-  //virtual void SendIdentityResponse (uint64_t amfUeN2Id,
-  				//				uint16_t enbUeN2Id);
 
 private:
   MemberNgcN2apSapAmf ();
@@ -421,7 +413,6 @@ void MemberNgcN2apSapEnbProvider<C>::SendRegistrationRequest (uint64_t amfUeN2Id
 template <class C>
 void MemberNgcN2apSapEnbProvider<C>::SendN2Message (uint64_t amfUeN2Id, uint16_t enbUeN2Id, uint64_t imsi, uint16_t ecgi)
 {
- std::cout << "Hihihihihi" << std::endl;
   m_owner->DoSendN2Message (amfUeN2Id, enbUeN2Id, imsi, ecgi);
 }
 

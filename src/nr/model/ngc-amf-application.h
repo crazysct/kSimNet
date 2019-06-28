@@ -135,9 +135,11 @@ private:
   void DoDeleteBearerRequest (NgcN11SapAmf::DeleteBearerRequestMessage msg);
 
   // jhlim
-  void NamfCommunicationUeContextTransfer(uint64_t imsi);
-  void NamfCommunicationUeContextTransferResponse(uint64_t imsi, uint64_t context);
-  void NamfCommunicationRegistrationCompleteNotify(uint64_t imsi);
+  void SendNamfCommunicationUeContextTransfer(uint64_t imsi);
+  void DoNamfCommunicationUeContextTransfer(uint64_t imsi);
+  void SendNamfCommunicationUeContextTransferResponse(uint64_t imsi, uint64_t context);
+  void DoNamfCommunicationUeContextTransferResponse(uint64_t imsi, uint64_t context);
+  void SendNamfCommunicationRegistrationCompleteNotify(uint64_t imsi);
   bool IsGuti(uint64_t imsi);
   void DoRegistrationComplete(uint64_t amfUeN2Id, uint16_t enbUeN2Id);
   void DoIdentityResponse (uint64_t amfUeN2Id, uint16_t enbUeN2Id);
