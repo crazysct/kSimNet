@@ -8,7 +8,9 @@
 - TCP congestion window size: With TCP congestion window size, user can verify the operation of network simulator and changes of RTT or throughput.
 - Scaling delay: Scaling delay means additional delay components compared to non-virtualized core networks. Additional delays depending on where network operators put VNFs (VNF topology) can be evaluated.
 - SDN switch throughput per port: With SDN controller and switches, user can engineer traffic flowing the simulation networks. SDN switch throughput per port can show results of traffic engineering.
+
 2. Simulation parameters for configuration
+
 2.1 General parameters 
 - X2 interface settings (src/lte/helper$ point-to-point-epc-helper.cc )
 -- X2 link data rate (m_x2LinkDataRate)
