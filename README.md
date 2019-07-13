@@ -13,17 +13,17 @@
 
 2.1 General parameters 
 - X2 interface settings (src/lte/helper$ point-to-point-epc-helper.cc )
--- X2 link data rate (m_x2LinkDataRate)
--- X2 link delay (m_x2LinkDelay)
--- MTU of X2 link (m_x2LinkMtu)
+  + X2 link data rate (m_x2LinkDataRate)
+  + X2 link delay (m_x2LinkDelay)
+  + MTU of X2 link (m_x2LinkMtu)
 - S1AP interface settings (src/lte/helper$ point-to-point-epc-helper.cc )
--- S1AP link data rate (m_s1apLinkDataRate)
--- S1AP link delay (m_s1apLinkDelay)
--- MTU of S1AP link (m_s1apLinkMtu)
+  + S1AP link data rate (m_s1apLinkDataRate)
+  + S1AP link delay (m_s1apLinkDelay)
+  + MTU of S1AP link (m_s1apLinkMtu)
 - S1-U interface settings (src/lte/helper$ point-to-point-epc-helper.cc )
--- S1-U link data rate (m_s1uLinkDataRate)
--- S1-U link delay (m_s1uLinkDelay)
--- MTU of S1-U link (m_s1uLinkMtu)
+  + S1-U link data rate (m_s1uLinkDataRate)
+  + S1-U link delay (m_s1uLinkDelay)
+  + MTU of S1-U link (m_s1uLinkMtu)
 
 ## Authors
 
