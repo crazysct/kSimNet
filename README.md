@@ -3,14 +3,14 @@
 
 ## Features
 1. Performance metrics
-- User throughput: User throughput is an important metric for network simulators, while it can show general network performance for each user device.
-- User round trip time: User RTT can show timely change of packet transfer performance. If RTT increase/decrease sharply in short period of time, there might be special reasons such as VNF scaling, and so on.
-- TCP congestion window size: With TCP congestion window size, user can verify the operation of network simulator and changes of RTT or throughput.
-- Scaling delay: Scaling delay means additional delay components compared to non-virtualized core networks. Additional delays depending on where network operators put VNFs (VNF topology) can be evaluated.
-- SDN switch throughput per port: With SDN controller and switches, user can engineer traffic flowing the simulation networks. SDN switch throughput per port can show results of traffic engineering.
+- User throughput: User throughput is an important metric for network simulators, while it can show general network performance for each user device.
+- User round trip time: User RTT can show timely change of packet transfer performance. If RTT increase/decrease sharply in short period of time, there might be special reasons such as VNF scaling, and so on.
+- TCP congestion window size: With TCP congestion window size, user can verify the operation of network simulator and changes of RTT or throughput.
+- Scaling delay: Scaling delay means additional delay components compared to non-virtualized core networks. Additional delays depending on where network operators put VNFs (VNF topology) can be evaluated.
+- SDN switch throughput per port: With SDN controller and switches, user can engineer traffic flowing the simulation networks. SDN switch throughput per port can show results of traffic engineering.
 2. Simulation parameters for configuration
 2.1 General parameters 
-- X2 interface settings (src/lte/helper$ point-to-point-epc-helper.cc )
+- X2 interface settings (src/lte/helper$ point-to-point-epc-helper.cc )
 -- X2 link data rate (m_x2LinkDataRate)
 -- X2 link delay (m_x2LinkDelay)
 -- MTU of X2 link (m_x2LinkMtu)
