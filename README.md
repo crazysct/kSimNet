@@ -130,19 +130,19 @@
 	+ QoS weight (qos-controller.cc (weight) )
 
 ## Authors
-5G K-SimNet is the result of the development effort carried out by different people at Seoul National University in South Korea. The main contributors are listed below.
+5G K-SimNet is the result of the development effort carried out by different people at **Seoul National University** in South Korea. The main contributors are listed below.
 
-### Network Laboratory (NETLAB), Seoul National University http://netlab.snu.ac.kr/
+### Network Laboratory (NETLAB) http://netlab.snu.ac.kr/
 - Dongyeon Woo <dywoo@netlab.snu.ac.kr>
 - Seongjoon Kang <sjkang@netlab.snu.ac.kr>
 - Siyoung Choi <sychoi@netlab.snu.ac.kr>
 - Saewoong Bahk <sbahk@snu.ac.kr>
 
-### Multimedia & Wireless Networking Laboratory (MWNL), Seoul National University http://www.mwnl.snu.ac.kr/
+### Multimedia & Wireless Networking Laboratory (MWNL) http://www.mwnl.snu.ac.kr/
 - Junseok Kim <jskim14@mwnl.snu.ac.kr>
 - Sunghyun Choi <schoi@snu.ac.kr>
 
-### ??? Laboratory (MMLAB), Seoul National University http://mmlab.snu.ac.kr
+### ??? Laboratory (MMLAB) http://mmlab.snu.ac.kr
 - Junghwan Song <jhsong@mwnl.snu.ac.kr>
 - Taekyoung (Ted) Kwon <tkkwon@snu.ac.kr>
 
