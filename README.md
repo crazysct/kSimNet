@@ -34,7 +34,7 @@
 	+ Alternative splitting scheme to two eNB (2)
 	+ Assistant info-based splitting scheme (3,4)
 
-2.3 5G NR Channel
+2.3. 5G NR Channel
 - Operating band parameters (src/mmwave/model$ mmwave-phy-mac-common.cc)
 	+ Center frequency (m_centerFrequency)
 - Channel parameters (src/mmwave/model$ mmwave-3gpp-propagation-loss-model.cc)
@@ -86,7 +86,7 @@
 - Slant angle (m_rotation.z)
 - Polarization slant angle (0 or 45 degree) (m_pol)
 
-2.4 5G Core
+2.4. 5G Core
 - AMF-related parameters (virt-5gc.cc, virt-5gc-node.cc, topology input file (user input))
 	+ AMF cpu capacity (Virt5gcNode::cpuSize)
 	+ AMF memory capacity (Virt5gcNode::memSize)
