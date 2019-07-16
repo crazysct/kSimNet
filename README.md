@@ -140,6 +140,7 @@
 
 ### Multimedia & Wireless Networking Laboratory (MWNL) http://www.mwnl.snu.ac.kr/
 - Junseok Kim <jskim14@mwnl.snu.ac.kr>
+- Suhun Lim <shlim@mwnl.snu.ac.kr>
 - Sunghyun Choi <schoi@snu.ac.kr>
 
 ### ??? Laboratory (MMLAB) http://mmlab.snu.ac.kr
