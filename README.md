@@ -143,7 +143,7 @@
 - Suhun Lim <shlim@mwnl.snu.ac.kr>
 - Sunghyun Choi <schoi@snu.ac.kr>
 
-### ??? Laboratory (MMLAB) http://mmlab.snu.ac.kr
+### Multimedia and Mobile Communications Laboratory (MMLAB) http://mmlab.snu.ac.kr
 - Junghwan Song <jhsong@mwnl.snu.ac.kr>
 - Taekyoung (Ted) Kwon <tkkwon@snu.ac.kr>
 
